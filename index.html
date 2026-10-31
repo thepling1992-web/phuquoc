@@ -200,7 +200,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .tag.c{background:#fff3d6;color:#92400e}
 .bt{margin:6px 0;font-size:12.5px}.bt th{background:#f1f5f9}.bmsg{margin:6px 0 0;font-size:13px}.ok{color:#0b6f63}.bad{color:#b91c1c}
 #trayWrap{grid-column:1/-1;order:-1;min-width:0}
-@media(max-width:899px){#trayWrap{grid-column:auto;order:2}#side{order:1}#mapcol{order:3}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
+@media(max-width:899px){#trayWrap{grid-column:auto;order:2}#side{order:1}#mapcol{order:3}#extra{order:4}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
 @media(hover:none){#mhint{display:none}.trh span{display:none}}
 .fab{position:fixed;right:14px;bottom:18px;z-index:70;background:var(--navy);color:#fff;border-radius:99px;padding:10px 16px;font-weight:800;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.3);display:none}
 @media(max-width:899px){.fab{display:block}.fab[hidden]{display:none!important}#toast{bottom:76px}}
@@ -208,6 +208,13 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .ied{margin-bottom:4px}.ied .edbar{margin:6px 0}.edbar input[type=text].wide{flex:1 1 220px}
 .cand{margin:6px 0 8px;border:1px solid var(--ln);border-radius:14px;padding:8px 10px;background:#fafcfc}.cand .lb{font-size:12px;color:var(--mut)}
 .cc{flex:0 0 auto;display:flex;gap:8px;align-items:center;border:1px solid var(--c);border-radius:14px;background:#fff;padding:5px 10px 5px 5px;text-align:left;max-width:210px}.cc b{font-size:12.5px;display:block;line-height:1.25}.cc small{color:var(--mut);font-size:11px}.cc .th.sm{width:46px;height:46px}
+#extra{min-width:0}
+.fhead{display:flex;align-items:center;gap:8px;margin-top:10px}.fhead b{font-size:13.5px}
+.fold{margin-left:auto;background:#eef2f5;border-radius:99px;padding:3px 11px;font-size:12px;font-weight:700;color:#334155;white-space:nowrap}
+#mapcol.folded>*:not(.mfh){display:none}
+@media(min-width:900px){.grid:not(.one) #mapcol{grid-column:1;grid-row:2/span 2}.grid:not(.one) #side{grid-column:2;grid-row:2}.grid:not(.one) #extra{grid-column:2;grid-row:3}}
+.ebtn{margin-left:auto}.ebtn+.fold{margin-left:0}.ebtn.on{background:var(--ac);color:#fff}
+.mdays{display:flex;gap:5px;flex-wrap:wrap;margin:8px 12px 0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head>
 <body>
@@ -227,14 +234,17 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
   <div class="grid" id="grid">
     <div id="trayWrap" hidden></div>
     <section id="mapcol" aria-label="지도">
+      <div class="fhead mfh" style="padding:8px 12px;margin:0"><b>🗺 지도 · 오늘의 동선</b><button class="fold" id="mfold" data-act="fold" data-k="map">접기 ▲</button></div>
       <div class="mw"><div id="map" role="application" aria-label="푸꾸옥 지도"></div>
         <div class="mctl"><button class="mtype" id="mtype" data-act="mtype" aria-label="지도 종류 전환">🛰 위성</button><button class="mtype" id="azbtn" data-act="azoom" aria-label="자동 줌 켜기/끄기">🔍 자동 줌 꺼짐</button></div><span class="mchip" id="mchip">오늘의 동선 · 북쪽 ↑</span><span class="compass">N ↑</span>
         <div class="mfail" id="mfail" hidden>지도를 불러오지 못했어요.<br>인터넷 연결을 확인하고 새로고침해 주세요.</div></div>
       <div class="seg" id="seg" role="group" aria-label="지도 범위"><button data-act="scope" data-k="route" aria-pressed="true">오늘 동선</button><button data-act="scope" data-k="all" aria-pressed="false">섬 전체</button></div>
+      <div class="mdays" id="mdays"></div>
       <p class="hint" id="mhint">핀 끝점이 실제 좌표예요. 핀에 마우스를 올리면 상세, 두 손가락으로 확대할 수 있어요.</p>
       <div id="pcard"></div>
     </section>
     <section id="side"></section>
+    <section id="extra" hidden></section>
   </div>
 </main>
 <footer>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
@@ -322,9 +332,9 @@ p('masala','food','Lake Masala',10.325929,103.8577233,'북부','인도식 커리
  ['hana','HANA Coffee','하나 커피',10.3260381,103.8610534,'북부','베트남 커피, 코코넛 커피']
 ].forEach(a=>p(a[0],'cafe',a[1],a[3],a[4],a[5],a[6],{vn:a[2],dish:'coffee'}));
 // 관광·교통·숙소 (좌표는 개략)
-p('airport','move','푸꾸옥 국제공항',10.1707,103.9931,'중부','출입국. 대형 리조트 대부분 무료 공항 셔틀 운영',{ap:1,art:'plane'});
-p('salinda','stay','살린다 리조트 (11/7–11/8 · 2박)',10.1830,103.9560,'중부','Cua Lap, Duong To. 해수 인피니티 풀, 전용 해변(물이 탁할 수 있음), 조식 뷔페, 무료 공항 셔틀. 공항 약 5km · 야시장 약 4km',{vn:'Salinda Resort · 체크인 14:00 / 체크아웃 12:00',ap:1,art:'hotel',tip:'정확한 위치는 구글 지도 이름 검색으로 한 번 더 확인하세요.'});
-p('sonasea','stay','베스트 웨스턴 프리미어 소나시 (11/9–11/10 · 2박)',10.1400,103.9560,'중부','Long Beach(Bai Truong) 앞 대형 수영장 리조트, 무료 공항 셔틀. 공항 약 8km',{vn:'Best Western Premier Sonasea · 체크인 15:00 / 체크아웃 12:00',ap:1,art:'hotel',tip:'정확한 위치는 구글 지도 이름 검색으로 한 번 더 확인하세요.'});
+p('airport','move','푸꾸옥 국제공항',10.1707,103.9931,'중부','출입국. 대형 리조트 대부분 무료 공항 셔틀 운영',{ap:1,art:'plane',color:'#2f80c8'});
+p('salinda','stay','살린다 리조트 (11/7–11/8 · 2박)',10.182883,103.968169,'중부','Cua Lap, Duong To. 해수 인피니티 풀, 전용 해변(물이 탁할 수 있음), 조식 뷔페, 무료 공항 셔틀. 공항 약 5km · 야시장 약 4km',{vn:'Salinda Resort · 체크인 14:00 / 체크아웃 12:00',fixed:1,art:'hotel',color:'#1f8a9e'});
+p('sonasea','stay','베스트 웨스턴 프리미어 소나시 (11/9–11/10 · 2박)',10.130356,103.980514,'중부','Long Beach(Bai Truong) 앞 대형 수영장 리조트, 무료 공항 셔틀. 공항 약 8km',{vn:'Best Western Premier Sonasea · 체크인 15:00 / 체크아웃 12:00',fixed:1,art:'hotel',color:'#1f8a9e'});
 p('safari','sight','빈펄 사파리',10.3380,103.8870,'북부','아시아 최대급 사파리. 전동카트·셔틀로 이동, 동물 접촉 후 손 씻기, 체류 약 3시간',{ap:1,tip:'오픈 시간(09:00)에 맞춰 입장하면 덜 덥습니다. 모기 기피제 필수.'});
 p('grandworld','sight','그랜드월드',10.3262,103.8590,'북부','베네치아풍 운하·쇼핑·식당가·야경. 체류 2~3시간',{tip:'낮 12~15시 야외는 피하고 실내 상점·카페를 번갈아 이용하세요.'});
 p('nightmkt','sight','즈엉동 야시장',10.2172,103.9572,'중부','해산물 식당·과일·길거리 음식·기념품. 체류 약 1.5시간',{ap:1,tip:'길거리 음식은 뜨겁게 조리된 것만, 생과일주스·얼음은 피하세요.'});
@@ -337,11 +347,11 @@ p('kk_nm','shop','킹콩마트 야시장 지점',10.2168,103.9576,'중부','야�
 p('cl_kk','cloth','킹콩마트 잡화·의류 코너',10.1927,103.9672,'중부','라탄가방, 옷, 베트남 전통 모자, 화장품 등을 함께 판매하는 넓은 매장',{});
 p('cl_nm','cloth','야시장 의류·잡화 노점',10.2176,103.9568,'중부','리넨 원피스·비치웨어·가방 노점. 흥정 필수, 입어보고 구입',{ap:1,tip:'허리가 조이지 않는 오버사이즈·리넨 원피스를 추천합니다.'});
 p('cl_gw','cloth','그랜드월드 상점가',10.3258,103.8600,'북부','실내 상점가라 더위를 피하며 쇼핑하기 좋습니다 (2일차 오후)',{ap:1});
-p('cl_sn','cloth','소나시 야시장 (옷·기념품)',10.1470,103.9572,'중부','소나시 숙소 주변 야시장. 4일차 저녁 가벼운 쇼핑용',{ap:1});
+p('cl_sn','cloth','소나시 야시장 (옷·기념품)',10.1319,103.9800,'중부','소나시 숙소 주변 야시장. 4일차 저녁 가벼운 쇼핑용',{ap:1});
 p('cl_gb','cloth','The Green Boutique',10.1995,103.9675,'중부','92 Trần Hưng Đạo의 부티크. 취급 품목은 방문 전 확인하세요',{ap:1});
 // 마사지 (전용 코스가 안내된 곳만)
 p('yuju','spa','유주 스파',10.2020,103.9660,'중부','마사지 전문, 자정까지 운영, 공항 픽업. 99A Trần Hưng Đạo. 전용 코스가 안내된 곳',{ap:1,tip:'예약할 때 현재 시기에 맞는 코스(압·자세·부위)를 한 번 더 확인하세요.'});
-p('raon','spa','라온스파 (소나시)',10.1440,103.9566,'중부','소나시 지역 한인 운영 마사지샵. 60·90·120분 전용 코스 안내. 한국어 예약이 편해요',{ap:1,tip:'시기별로 가능한 자세·부위가 달라요. 예약 때 상담을 먼저 받으세요.'});
+p('raon','spa','라온스파 (소나시)',10.1314,103.9813,'중부','소나시 지역 한인 운영 마사지샵. 60·90·120분 전용 코스 안내. 한국어 예약이 편해요',{ap:1,tip:'시기별로 가능한 자세·부위가 달라요. 예약 때 상담을 먼저 받으세요.'});
 p('spael','spa','스파 더엘',10.0335,104.0050,'남부','An Thới 남부. 전용 코스 안내, 공항 샌딩·짐 보관. 샤워실 바닥이 미끄러우니 주의',{ap:1,tel:'+84 348 693 572',tip:'남부라 멀어요. 선셋타운·공항 이동 때 묶어서 가세요.'});
 // 병원
 p('vinmec','med','Vinmec 국제병원 (본원)',10.3230,103.8575,'북부','24시간 응급실. 헬기 이송 가능. Bai Dai, Ganh Dau',{ap:1,tel:'0297 3985 588',tip:'섬의 1순위 응급 병원입니다. 사파리·그랜드월드 근처.'});
@@ -428,9 +438,9 @@ const EXTRA=[
  {hero:'Amazing beach on Phu Quoc island Vietnam (38647607275).jpg',cap:'푸꾸옥 해변',kicker:'숙소 이동 + 야시장',sub:'살린다 체크아웃 후 소나시로, 저녁엔 야시장.',todo:['짐 정리·체크아웃 12:00 전','여권·객실 키 반납 확인','현금 소액 (야시장·흥정)']},
  {hero:'Sunset on Phu Quoc island.jpg',cap:'푸꾸옥 일몰',kicker:'해변·수영장 + 선셋',sub:'오전엔 여유롭게, 오후엔 남부 일몰.',todo:['수영복·타월','일몰 시간 전 이동','모기 기피제']},
  {hero:'Phu Quoc, Viet Nam.jpg',cap:'푸꾸옥',kicker:'귀국 · 20:45 출발',sub:'체크아웃 후 마지막 쇼핑, 17:45쯤 공항으로.',todo:['여권·탑승권','기념품 포장·수하물 무게','체크아웃·짐 보관 확인']}];
-Object.values(P).forEach(q=>{if(q.cat!=='food'&&q.cat!=='cafe')q.ap=1});
+Object.values(P).forEach(q=>{if(q.cat!=='food'&&q.cat!=='cafe'&&!q.fixed)q.ap=1});
 /* ---------- state & helpers ---------- */
-const S={view:'plan',spot:'',day:0,scope:'route',focus:0,pick:null,open:{},prev:{},sel:{},tray:'sight',zero:0,trayOpen:store.get('trayopen',null)===null?innerWidth>=700:store.get('trayopen')!==false,autoZoom:store.get('autozoom',false)===true,fitKey:'',addOpen:false,edOpen:false,heroOpen:false,picking:null,daysOpen:store.get('daysopen',true)!==false,rainOpen:false,budOpen:false,cats:new Set(FILT),chk:store.get('chk2',{}),ck:store.get('ck3',{})};
+const S={view:'plan',spot:'',day:0,scope:'route',focus:0,pick:null,open:{},prev:{},sel:{},tray:'sight',zero:0,fold:store.get('fold1',{})||{},edit:false,zd:0,trayOpen:store.get('trayopen',null)===null?innerWidth>=700:store.get('trayopen')!==false,autoZoom:store.get('autozoom',false)===true,fitKey:'',addOpen:false,edOpen:false,heroOpen:false,picking:null,daysOpen:store.get('daysopen',true)!==false,rainOpen:false,budOpen:false,cats:new Set(FILT),chk:store.get('chk2',{}),ck:store.get('ck3',{})};
 function hav(a,b){const R=6371,r=Math.PI/180,dl=(b.lat-a.lat)*r,dg=(b.lng-a.lng)*r,x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
 const km=(a,b)=>hav(a,b)*1.35;
 const lodgeP=()=>P[DAYS[S.day].lodge];
@@ -475,6 +485,9 @@ function initMap(){if(!HAS){$('#mfail').hidden=false;return}
  try{map=L.map('map',{zoomControl:false,scrollWheelZoom:true,worldCopyJump:false}).setView([10.17,103.98],10);
   base=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'});
   sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:18,attribution:'위성 © Esri, Maxar, Earthstar Geographics'});
+  const b0=base,alt=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap © CARTO'});let te=0;
+  b0.on('tileerror',()=>{te++;if(te===6&&map&&map.hasLayer(b0)){map.removeLayer(b0);alt.addTo(map);base=alt;toast('기본 지도 이미지를 불러오지 못해 대체 지도로 바꿨어요')}});
+  sat.on('tileerror',()=>{if(!sat.__w){sat.__w=1;toast('위성 이미지를 불러오지 못했어요. 인터넷 연결을 확인해 주세요')}});
   (store.get('mtype','map')==='sat'?sat:base).addTo(map);setMtBtn();
   L.control.zoom({position:'topright'}).addTo(map);L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
   layer=L.layerGroup().addTo(map);hov=L.layerGroup().addTo(map);map.on('click',onMapClick)}catch(e){map=null;$('#mfail').hidden=false}}
@@ -495,7 +508,7 @@ function drawMap(fit){if(!map||!layer)return;layer.clearLayers();
   m.on('click',()=>{S.focus=ns[0]-1;S.pick=null;renderCard();drawMap(false)});layer.addLayer(m)});
  if(fit){if(S.view==='spots'||S.scope==='all')map.fitBounds(ISLAND,{padding:[10,10]});else if(pts.length>1)map.fitBounds(pts,{padding:[56,56],maxZoom:14});else if(pts.length===1)map.setView(pts[0],14)}}
 function cardPick(){if(S.pick&&P[S.pick])return P[S.pick];if(S.view==='plan'){const rp=routePts();if(rp.length){S.focus=Math.max(0,Math.min(S.focus,rp.length-1));return rp[S.focus].pl}}return null}
-function flyTo(q,z){if(!map)return;if(S.autoZoom)map.flyTo([q.lat,q.lng],Math.max(map.getZoom(),z||15),{duration:.6});else{try{if(!map.getBounds().contains([q.lat,q.lng]))map.panTo([q.lat,q.lng],{animate:true,duration:.4})}catch(e){}}}
+function flyTo(q,z){if(!map)return;if(S.autoZoom)map.flyTo([q.lat,q.lng],Math.max(map.getZoom(),z||15),{duration:.6});}
 function setAzBtn(){const b=$('#azbtn');if(b){b.textContent=S.autoZoom?'🔍 자동 줌 켜짐':'🔍 자동 줌 꺼짐';b.setAttribute('aria-pressed',S.autoZoom)}}
 function renderCard(){const el=$('#pcard');if(!el)return;const isPlan=S.view==='plan';let h='';
  $('#seg').hidden=!isPlan;
@@ -522,38 +535,40 @@ function renderTabs(){$('#tabs').innerHTML=VIEWS.map(v=>'<button role="tab" data
 function renderDays(){const el=$('#days');if(el)el.hidden=true}
 function status(){const t=new Date(),a=new Date(t.getFullYear(),t.getMonth(),t.getDate()),s=new Date(2026,10,7),e=new Date(2026,10,11),d=Math.round((s-a)/864e5);
  if(d>0)return 'D-'+d+' · 여행 전';if(a<=e)return 'DAY '+(Math.round((a-s)/864e5)+1)+' · 여행 중';return '<svg width="14" height="14" viewBox="0 0 24 24" fill="#e0457b"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg> 다녀왔어요'}
-function renderHero(){const h=$('#heroSec');h.hidden=S.view!=='plan';if(h.hidden)return;const D=DAYS[S.day],E=EXTRA[S.day],ov=HERO[S.day];
- const src=ov||imgUrl(E.hero,1200);
- h.innerHTML='<div class="hero"><img referrerpolicy="no-referrer" src="'+esc(src)+'" alt="" onerror="this.remove()"><span class="bdg">'+status()+'</span><button class="hbtn" data-act="heroed">'+(S.heroOpen?'닫기':'사진 바꾸기')+'</button><div class="ht"><small>DAY '+String(S.day+1).padStart(2,'0')+' · '+esc(E.kicker)+'</small><h2>'+esc(D.name)+'</h2><p>'+esc(E.sub)+'</p></div></div>'+
-  (S.heroOpen?'<div class="hpanel"><b>배너 사진 바꾸기 (이 날)</b><div class="edbar"><input type="text" id="hurl" placeholder="사진 주소(https://...)를 붙여넣기" style="flex:1 1 200px"><button class="btn p" data-act="heroset">적용</button></div><div class="edbar"><label class="btn" for="hfile">내 사진 선택</label><input type="file" id="hfile" accept="image/*" hidden><button class="btn" data-act="heroreset">기본 사진으로</button></div><p class="hint" style="margin:4px 0 0">고른 사진은 이 기기에만 저장돼요. 다른 사람에게는 주소(https) 방식만 공유 링크에 담겨요.</p></div>':'')+
-  '<div class="cr">'+(ov?'내가 지정한 사진':'사진 · '+esc(E.cap)+' — <a href="https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(E.hero.replace(/ /g,'_'))+'" target="_blank" rel="noopener">Wikimedia Commons</a>')+'</div>'}
+function renderHero(){const h=$('#heroSec');h.hidden=S.view!=='plan';if(h.hidden)return;const D=DAYS[S.day],E=EXTRA[S.day];
+ h.innerHTML='<div class="hero"><img referrerpolicy="no-referrer" src="'+imgUrl(E.hero,1200)+'" alt="" onerror="this.remove()"><span class="bdg">'+status()+'</span><div class="ht"><small>DAY '+String(S.day+1).padStart(2,'0')+' · '+esc(E.kicker)+'</small><h2>'+esc(D.name)+'</h2><p>'+esc(E.sub)+'</p></div></div><div class="cr">사진 · '+esc(E.cap)+' — <a href="https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(E.hero.replace(/ /g,'_'))+'" target="_blank" rel="noopener">Wikimedia Commons</a></div>'}
 const GRIP='<svg viewBox="0 0 10 16" aria-hidden="true"><circle cx="2.5" cy="2.5" r="1.6"/><circle cx="7.5" cy="2.5" r="1.6"/><circle cx="2.5" cy="8" r="1.6"/><circle cx="7.5" cy="8" r="1.6"/><circle cx="2.5" cy="13.5" r="1.6"/><circle cx="7.5" cy="13.5" r="1.6"/></svg>';
+const editBtn=()=>'<button class="fold ebtn'+(S.edit?' on':'')+'" data-act="editmode">'+(S.edit?'✔ 확인':'✏ 편집')+'</button>';
+const foldBtn=id=>'<button class="fold" data-act="fold" data-k="'+id+'" aria-expanded="'+(S.fold[id]!==true)+'">'+(S.fold[id]===true?'펼치기 ▼':'접기 ▲')+'</button>';
 function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
  const dt=new Date(2026,10,7+S.day),wd=['일','월','화','수','목','금','토'][dt.getDay()];
- let h='<div class="sh"><h3>오늘의 일정</h3><span class="cnt">'+D.items.length+'</span><span class="ds">이동 약 '+ch.tot.toFixed(0)+'km</span></div>';
+ let h='<div class="sh"><h3>오늘의 일정</h3><span class="cnt">'+D.items.length+'</span><span class="ds">이동 약 '+ch.tot.toFixed(0)+'km</span>'+editBtn()+foldBtn('list')+'</div>';
+ const lf=S.fold.list===true;
  const lname=esc(P[D.lodge].name.replace(/\s*\(.*\)/,''));
  h+='<div class="sh" style="margin-top:8px"><span class="chp">'+BED+lname+' · '+(D.night===false?'체크아웃 12:00':nightNo()+'박째')+'</span><span class="ds">'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일 '+wd+'요일</span></div>';
  h+=daySel()+wxBlock();
- h+='<p class="hint" style="margin:8px 0 0">왼쪽 ⠿ 손잡이를 끌어 순서를 바꾸고, 위 후보 카드를 끌어다 놓으면 추가돼요. 일정을 누르면 시간 변경·삭제·예비 일정을 볼 수 있어요.</p><div class="note">'+esc(D.note)+'</div><div id="plist">';
- if(!D.items.length)h+='<div class="empty">일정이 비어 있어요. 위 후보 카드를 여기로 끌어다 놓거나 ＋를 눌러 보세요.</div>';
- D.items.forEach((it,i)=>{const k=S.day+'_'+i,x=it.o[0],z=ch.out[i],pl=z.pl,c=CAT[oCat(x)][1],on=!!S.open[k];
+ h+=lf?'<div class="note">'+esc(D.note)+'</div>':'<p class="hint" style="margin:8px 0 0">'+(S.edit?'왼쪽 ⠿ 손잡이를 끌어 순서를 바꾸고, 후보 카드를 끌어다 놓으면 추가돼요. 일정을 누르면 이름·종류·시간·비용을 고칠 수 있어요.':'일정을 누르면 상세와 예비 일정을 볼 수 있어요. 순서·시간·이름을 바꾸려면 ✏ 편집을 누르세요.')+'</p><div class="note">'+esc(D.note)+'</div><div id="plist">';
+ if(!lf&&!D.items.length)h+='<div class="empty">일정이 비어 있어요. 위 후보 카드를 여기로 끌어다 놓거나 ＋를 눌러 보세요.</div>';
+ (lf?[]:D.items).forEach((it,i)=>{const k=S.day+'_'+i,x=it.o[0],z=ch.out[i],pl=z.pl,c=CAT[oCat(x)][1],on=!!S.open[k];
   const alt=it.o.length-1;
-  h+='<div class="it'+(on?' on':'')+'" data-i="'+i+'"><div class="ihw"><span class="gr" data-i="'+i+'" role="button" aria-label="끌어서 순서 바꾸기" title="끌어서 이동">'+GRIP+'</span><button class="ih" data-act="open" data-k="'+k+'" aria-expanded="'+on+'">'+(pl?thumb(pl,'',z.num):ntb(oCat(x)))+
+  h+='<div class="it'+(on?' on':'')+'" data-i="'+i+'"><div class="ihw">'+(S.edit?'<span class="gr" data-i="'+i+'" role="button" aria-label="끌어서 순서 바꾸기" title="끌어서 이동">'+GRIP+'</span>':'')+'<button class="ih" data-act="open" data-k="'+k+'" aria-expanded="'+on+'">'+(pl?thumb(pl,'',z.num):ntb(oCat(x)))+
    '<span class="ix"><span class="tm">'+esc(it.tm)+' <span class="pill sm" style="--c:'+CAT[oCat(x)][1]+'">'+CAT[oCat(x)][0]+'</span></span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(itCost(it)>0?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button></div>';
   if(on){h+='<div class="body">';
-   h+='<div class="ied"><div class="edbar"><input type="text" class="wide" data-act="etitle" data-k="'+k+'" value="'+esc(oTitle(x))+'" placeholder="일정 이름" aria-label="일정 이름"></div>'+
+   if(S.edit)h+='<div class="ied"><div class="edbar"><input type="text" class="wide" data-act="etitle" data-k="'+k+'" value="'+esc(oTitle(x))+'" placeholder="일정 이름" aria-label="일정 이름"></div>'+
     '<div class="edbar"><select data-act="ecat" data-k="'+k+'" aria-label="일정 종류" style="width:auto">'+Object.keys(CAT).map(ck=>'<option value="'+ck+'"'+(ck===oCat(x)?' selected':'')+'>'+CAT[ck][0]+'</option>').join('')+'</select><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" aria-label="시간" style="width:auto"><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="비용(동) '+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" aria-label="예상 비용(동)" style="width:150px"></div>'+
     '<div class="edbar"><input type="text" class="wide" data-act="ewhy" data-k="'+k+'" value="'+esc(x.why||'')+'" placeholder="메모·설명" aria-label="메모"></div>'+
     '<div class="edbar"><button class="btn" data-act="mv" data-k="'+k+'" data-dir="-1"'+(i===0?' disabled':'')+'>▲ 위로</button><button class="btn" data-act="mv" data-k="'+k+'" data-dir="1"'+(i===D.items.length-1?' disabled':'')+'>▼ 아래로</button><button class="btn d" data-act="del" data-k="'+k+'">삭제</button><span class="mut">비용을 비우면 추정값</span></div></div>';
-   h+=candBlock(k,x,pl);
+   if(S.edit)h+=candBlock(k,x,pl);
    if(pl)h+=det(pl,true);else h+='<p>'+esc(x.why||oTitle(x))+'</p>';
    if(alt){h+='<div class="alt"><span class="lb">예비 일정</span>';it.o.forEach((a,ai)=>{if(ai===0)return;h+='<button class="chip" data-act="prev" data-k="'+k+'" data-i="'+ai+'" style="--c:'+CAT[oCat(a)][1]+'" aria-pressed="'+(S.prev[k]===ai)+'">'+esc(oTitle(a))+'</button>'});h+='</div>';
     if(S.prev[k]!=null){const a=it.o[S.prev[k]],ap=oPlace(a);h+='<div class="body">'+(ap?det(ap,true):'<div class="dh"><b>'+esc(oTitle(a))+'</b></div>')+(a.why?'<p>'+esc(a.why)+'</p>':'')+'<div class="lk"><button class="btn p" data-act="swap" data-k="'+k+'" data-i="'+S.prev[k]+'">이 일정으로 교체</button><button class="btn" data-act="prev" data-k="'+k+'" data-i="'+S.prev[k]+'">닫기</button></div></div>'}}
    h+='</div>'}
   h+='</div>'});
- h+='</div><div class="lkrow"><button class="btn p" data-act="share">내 일정 공유 링크 복사</button><button class="btn" data-act="resetday">이 날 기본 일정으로</button><button class="btn" data-act="resetall">'+(S.zero?'한 번 더 누르면 전체 초기화':'전체 기본 일정으로')+'</button></div><p class="hint" style="margin:6px 2px 0">수정한 일정은 이 기기(브라우저)에만 저장돼요. 다른 사람에게 보여주려면 공유 링크를 보내세요.</p>';
- h+='<div class="two"><div class="card"><h4>오늘 챙길 것</h4>'+todosOf(S.day).map((t,i)=>'<div class="chk td"><input type="checkbox" data-act="ck" data-k="'+S.day+'_'+i+'"'+(S.ck[S.day+'_'+i]?' checked':'')+' aria-label="완료"><input type="text" class="tdi" data-act="tdt" data-k="'+S.day+'_'+i+'" value="'+esc(t)+'" aria-label="챙길 것"><button class="x" data-act="tdd" data-k="'+S.day+'_'+i+'" aria-label="삭제">×</button></div>').join('')+'<div class="edbar"><input type="text" id="tdnew" placeholder="챙길 것 추가" style="flex:1 1 120px"><button class="btn p" data-act="tda">추가</button></div></div>'+
-  '<div class="card"><h4>함께 보는 메모</h4><textarea id="memo" placeholder="여기에 적어두세요 :)" aria-label="메모">'+esc(store.get('memo','')||'')+'</textarea><p class="hint" style="margin:6px 0 0">이 기기에만 저장돼요.</p></div></div>';
+ h+=(lf?'':'</div>')+'<div class="lkrow"><button class="btn p" data-act="editmode">'+(S.edit?'✔ 확인 (편집 끝내기)':'✏ 편집')+'</button><button class="btn" data-act="resetday">'+(S.zd?'한 번 더 누르면 이 날 리셋':'↺ 이 날 리셋')+'</button><button class="btn" data-act="resetall">'+(S.zero?'한 번 더 누르면 전체 리셋':'↺ 전체 리셋')+'</button><button class="btn" data-act="share">🔗 공유 링크 복사</button></div><p class="hint" style="margin:6px 2px 0"><b>리셋</b>은 직접 고친 내용을 지우고 처음 제안한 일정으로 되돌려요. <b>편집</b>은 순서·시간·이름·종류를 고치는 모드이고, <b>확인</b>을 누르면 편집이 끝나요(고친 내용은 자동 저장). 다른 기기에서 보려면 공유 링크를 쓰세요.</p>';
+ return h}
+function sPlanExtra(){let h='';const tf=S.fold.todo===true,mf=S.fold.memo===true;
+ h+='<div class="two"><div class="card"><div class="fhead" style="margin:0"><h4 style="margin:0">오늘 챙길 것</h4>'+foldBtn('todo')+'</div>'+(tf?'':todosOf(S.day).map((t,i)=>'<div class="chk td"><input type="checkbox" data-act="ck" data-k="'+S.day+'_'+i+'"'+(S.ck[S.day+'_'+i]?' checked':'')+' aria-label="완료"><input type="text" class="tdi" data-act="tdt" data-k="'+S.day+'_'+i+'" value="'+esc(t)+'" aria-label="챙길 것"><button class="x" data-act="tdd" data-k="'+S.day+'_'+i+'" aria-label="삭제">×</button></div>').join('')+'<div class="edbar"><input type="text" id="tdnew" placeholder="챙길 것 추가" style="flex:1 1 120px"><button class="btn p" data-act="tda">추가</button></div>')+'</div>'+
+  '<div class="card"><div class="fhead" style="margin:0"><h4 style="margin:0">함께 보는 메모</h4>'+foldBtn('memo')+'</div>'+(mf?'':'<textarea id="memo" placeholder="여기에 적어두세요 :)" aria-label="메모" style="margin-top:6px">'+esc(store.get('memo','')||'')+'</textarea><p class="hint" style="margin:6px 0 0">이 기기에만 저장돼요.</p>')+'</div></div>';
  h+=budPanel();
  return h+'<p class="hint" style="margin:10px 2px 0">시간과 거리는 추정치예요. 일정을 바꾸면 이동거리를 다시 계산해요.</p>'}
 const SPOTCATS=['all'].concat(FILT.filter(k=>k!=='stay'));
@@ -622,7 +637,7 @@ function editPanel(pl){const cu=!!pl.custom,coord=pl.lat.toFixed(6)+', '+pl.lng.
  (cu?'<div class="edbar"><input type="text" id="ename" value="'+esc(pl.name)+'" aria-label="이름" style="flex:1 1 140px"><input type="color" id="ecolor" value="'+colOf(pl)+'" aria-label="핀 색" style="width:44px;height:36px;padding:2px"></div>':'')+
  '<div class="edbar"><input type="text" id="ecoord" data-coord="e" value="'+coord+'" aria-label="좌표" style="flex:1 1 180px"><button class="btn" data-act="pick" data-k="e">지도에서 찍기</button></div>'+
  '<div class="edbar"><input type="number" id="erate" min="0" max="5" step="0.1" value="'+(pl.rating||'')+'" placeholder="별점 (선택)" style="width:110px" aria-label="별점"></div>'+
- '<div class="edbar"><input type="text" id="ephoto" value="'+(pl.photo&&urlOk(pl.photo)?esc(pl.photo):'')+'" placeholder="대표 사진 주소 (https://...)" aria-label="대표 사진 주소" style="flex:1 1 200px"><label class="btn" for="pfile">내 사진</label><input type="file" id="pfile" accept="image/*" hidden>'+(pl.photo?'<button class="btn d" data-act="delphoto" data-id="'+pl.id+'">사진 지우기</button>':'')+'</div>'+
+ '<div class="edbar"><input type="text" id="ephoto" value="'+(pl.photo&&urlOk(pl.photo)?esc(pl.photo):'')+'" placeholder="대표 사진 주소 (https://...)" aria-label="대표 사진 주소" style="flex:1 1 200px">'+(pl.photo?'<button class="btn d" data-act="delphoto" data-id="'+pl.id+'">사진 지우기</button>':'')+'</div>'+
  ((pl.cat==='food'||pl.cat==='cafe')?'<div class="edbar"><input type="text" id="emenu" value="'+esc(pl.menu||'')+'" placeholder="전체 메뉴 링크 (비우면 구글 검색)" aria-label="메뉴 링크" style="flex:1 1 200px"></div>':'')+
  '<div class="edbar"><button class="btn p" data-act="saveed" data-id="'+pl.id+'">저장</button>'+(cu?'<button class="btn d" data-act="delc" data-id="'+pl.id+'">이 장소 삭제</button>':'<button class="btn" data-act="resetp" data-id="'+pl.id+'">기본값으로</button>')+'</div>'+
  '<p class="hint" style="margin:2px 0 0">좌표는 구글 지도에서 장소를 길게 눌러 나오는 숫자(예: 10.2172, 103.9572)를 붙여넣어요. 바꾸면 "위치 확인"으로 표시돼요.</p></div></details>'}
@@ -738,7 +753,7 @@ function rainPanel(){const D=DAYS[S.day];let rows='';
   const c=Object.values(P).filter(isIndoor).filter(q=>q.id!==x.id).map(q=>({q,d:km(pl,q)})).sort((a,b)=>a.d-b.d).slice(0,3);
   rows+='<div class="rr"><b>'+esc(it.tm)+' '+esc(oTitle(x))+'</b><div class="alt">'+c.map(z=>'<button class="chip" data-act="rainswap" data-k="'+S.day+'_'+i+'" data-id="'+z.q.id+'" style="--c:'+colOf(z.q)+'">'+esc(z.q.name.replace(/\s*\(.*\)/,''))+' · '+z.d.toFixed(1)+'km</button>').join('')+'<button class="chip" data-act="rainswap" data-k="'+S.day+'_'+i+'" data-id="rest" style="--c:#3c4a4d">객실·호텔 휴식</button></div></div>'});
  return '<div class="card" style="margin-top:8px"><b>☔ 우천 대체안</b><p class="hint" style="margin:2px 0 6px">야외 일정을 실내 일정으로 바꿔요. 누르면 해당 일정이 교체되고 원래 일정은 예비로 남아요.</p>'+(rows||'<p class="hint" style="margin:0">오늘은 비가 와도 크게 영향받는 야외 일정이 없어요.</p>')+'</div>'}
-function wxBlock(){const w=WX&&WX[DATES[S.day]];let h='<div class="wx">';
+function wxBlock(){const fh='<div class="fhead"><b>☁ 날씨·예상 비용</b>'+foldBtn('wx')+'</div>';if(S.fold.wx===true)return fh;const w=WX&&WX[DATES[S.day]];let h=fh+'<div class="wx">';
  if(w&&w.code!=null)h+='<span class="wi">'+WICON(w.code)+'</span><b>'+WNAME(w.code)+'</b><span>'+Math.round(w.tmax)+'° / '+Math.round(w.tmin)+'°</span><span>강수확률 '+(w.pop==null?'-':w.pop+'%')+'</span><span class="mut">'+esc(WXSRC)+'</span>';
  else h+='<span class="mut">'+(WXERR||'날씨 불러오는 중…')+'</span>';
  h+='<button class="btn" data-act="rainsug" aria-expanded="'+S.rainOpen+'">☔ 우천 대체안 '+(S.rainOpen?'▲':'▼')+'</button></div>';
@@ -754,6 +769,9 @@ function render(){renderTabs();renderDays();renderHero();renderTray();const mapO
  if(S.view==='spots'){S.scope='all'}
  $('#mapcol').hidden=!mapOn;$('#grid').className='grid'+(mapOn?'':' one');
  $('#side').innerHTML=({plan:sPlan,spots:sSpots,talk:sTalk,info:sInfo}[S.view]||sPlan)();
+ $('#extra').hidden=S.view!=='plan';$('#extra').innerHTML=S.view==='plan'?sPlanExtra():'';
+ $('#mdays').innerHTML=S.view==='plan'?DAYS.map((d,i)=>'<button class="dm2" data-act="day" data-i="'+i+'" aria-pressed="'+(i===S.day)+'">'+d.d.replace('/','.')+' <small>'+d.w+'</small></button>').join(''):'';
+ {const mf=S.fold.map===true;$('#mapcol').classList.toggle('folded',mf);$('#mfold').textContent=mf?'펼치기 ▼':'접기 ▲'}
  if(mapOn){renderCard();if(map){const fk=S.day+S.view;const fit=S.autoZoom||S.fitKey!==fk;S.fitKey=fk;setTimeout(()=>{map.invalidateSize();drawMap(fit)},30)}}
  setAzBtn();fabUpdate();
  const qs=new URLSearchParams();qs.set('day',DATES[S.day]);qs.set('view',S.view);try{history.replaceState(null,'','?'+qs.toString()+location.hash)}catch(e){}}
@@ -782,6 +800,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='prev'){S.prev[k]=(S.prev[k]===i)?null:i;if(S.prev[k]==null)delete S.prev[k];render()}
  else if(a==='swap'){const ds=k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];it.o.unshift(it.o.splice(i,1)[0]);savePlan();delete S.prev[k];S.open={};S.open[k]=true;render();toast('교체했어요. 이동거리를 다시 계산했어요')}
  else if(a==='mtype'){toggleSat()}
+ else if(a==='editmode'){S.edit=!S.edit;S.open=S.open;render();toast(S.edit?'편집 모드예요. 손잡이로 순서를 바꾸고 일정을 눌러 고치세요':'편집을 마쳤어요. 고친 내용은 저장돼 있어요')}
+ else if(a==='fold'){S.fold[k]=!S.fold[k];store.set('fold1',S.fold);render()}
  else if(a==='candswap'){const ds=k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],id=b.dataset.id;if(!it||!P[id])return;it.o.unshift({id,why:'후보에서 교체'});savePlan();S.open={};S.open[k]=true;render();toast('교체했어요 · 원래 일정은 예비에 남아 있어요')}
  else if(a==='fab'){const f=$('#fab'),t=f.dataset.mode==='plan'?$('#side'):$('#mapcol');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}
  else if(a==='azoom'){S.autoZoom=!S.autoZoom;store.set('autozoom',S.autoZoom);setAzBtn();toast(S.autoZoom?'장소를 누르면 지도가 자동으로 이동·확대돼요':'자동 줌을 껐어요. 지도는 직접 확대하세요')}
@@ -792,7 +812,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
   savePlan();S.open={};render();toast('실내 일정으로 바꿨어요 · 원래 일정은 예비에 남아 있어요')}
  else if(a==='fxauto'){delete FX.manual;store.set('fx1',FX);updBud();toast('자동 환율로 되돌렸어요')}
  else if(a==='delphoto'){const q=P[b.dataset.id];if(q)setPhoto(q,null)}
- else if(a==='tpick'){if(noClick)return;const q=P[b.dataset.id];if(!q)return;S.pick=q.id;if(S.scope==='route'&&!routePts().some(z=>z.pl.id===q.id))S.scope='all';renderCard();drawMap(false);flyTo(q,15);toast('지도에 표시했어요: '+q.name.replace(/\s*\(.*\)/,''))}
+ else if(a==='tpick'){if(noClick)return;const q=P[b.dataset.id];if(!q)return;S.pick=q.id;if(S.scope==='route'&&!routePts().some(z=>z.pl.id===q.id))S.scope='all';renderCard();drawMap(false);flyTo(q,15);let oo=false;try{oo=!!map&&!S.autoZoom&&!map.getBounds().contains([q.lat,q.lng])}catch(e){}const nm0=q.name.replace(/\s*\(.*\)/,'');toast(oo?nm0+' · 지금 지도 화면 밖이에요. 지도를 직접 움직여 보세요':'지도에 표시했어요: '+nm0)}
  else if(a==='ttab'){S.tray=k;renderTray()}
  else if(a==='trayt'){S.trayOpen=!S.trayOpen;store.set('trayopen',S.trayOpen);renderTray()}
  else if(a==='pick'){if(!map){toast('지도를 불러오지 못해 직접 좌표를 입력해 주세요');return}S.picking=k;$('#map').style.cursor='crosshair';toast('지도에서 위치를 눌러 주세요');if(innerWidth<900)$('#mapcol').scrollIntoView({behavior:'smooth',block:'start'})}
@@ -814,7 +834,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='addp'){e.stopPropagation();const q=P[b.dataset.id];if(!q)return;insertItem(S.day,q.id,DAYS[S.day].items.length);savePlan();S.open={};render();toast('맨 아래에 추가했어요 · ⠿ 손잡이로 위치를 옮기세요')}
  else if(a==='mv'){const ds=k.split('_'),di=+ds[0],ix=+ds[1],dir=+b.dataset.dir;if(moveItem(di,ix,dir<0?ix-1:ix+2)){savePlan();S.open={};S.open[di+'_'+(ix+dir)]=true;render()}}
  else if(a==='del'){const ds=k.split('_');DAYS[+ds[0]].items.splice(+ds[1],1);savePlan();S.open={};render();toast('삭제했어요 · 아래 "이 날 기본 일정으로"로 되돌릴 수 있어요')}
- else if(a==='resetday'){const def=JSON.parse(DEF);DAYS[S.day].items=def[S.day];savePlan();S.open={};render();toast('이 날 일정을 기본으로 되돌렸어요')}
+ else if(a==='resetday'){if(!S.zd){S.zd=1;render();setTimeout(()=>{S.zd=0},4000);return}S.zd=0;const def=JSON.parse(DEF);DAYS[S.day].items=def[S.day];savePlan();S.open={};render();toast('이 날 일정을 기본으로 되돌렸어요')}
  else if(a==='resetall'){if(!S.zero){S.zero=1;render();setTimeout(()=>{S.zero=0},4000);return}S.zero=0;applyPlan(JSON.parse(DEF));savePlan();S.open={};render();toast('전체 일정을 기본으로 되돌렸어요')}
  else if(a==='share'){const u=location.origin+location.pathname+'#p='+encodePlan();copyText(u).then(ok=>{if(ok)toast('공유 링크를 복사했어요. 메신저에 붙여넣으세요');else{window.prompt('아래 링크를 복사하세요',u)}})}
  else if(a==='applyshare'){if(pendingShare){const ps=pendingShare;CUST.forEach(c=>{delete P[c.id]});CUST=ps.cust;CUST.forEach(c=>{P[c.id]=c});store.set('cust1',CUST);Object.values(P).forEach(restoreP);OVR=ps.ovr;Object.keys(OVR).forEach(applyOvr);store.set('ovr1',OVR);TODO=ps.todo;store.set('todo2',TODO);HERO=ps.hero;store.set('hero1',HERO);applyPlan(ps.plan);savePlan();pendingShare=null}$('#shareBan').hidden=true;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}S.open={};render();toast('공유받은 일정을 적용했어요')}
