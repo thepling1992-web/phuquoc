@@ -51,7 +51,7 @@ a{color:var(--acd)}
 .mw{position:relative}
 #map{height:clamp(300px,52vh,460px);background:#dbe9ee}
 .mchip{position:absolute;left:10px;top:10px;z-index:500;background:#fff;border-radius:99px;padding:5px 12px;font-weight:700;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.2)}
-.mtype{position:absolute;left:10px;bottom:30px;z-index:500;background:#fff;border-radius:99px;padding:5px 12px;font-weight:700;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.mctl{position:absolute;left:10px;bottom:30px;z-index:500;display:flex;gap:6px;flex-wrap:wrap}.mtype{background:#fff;border-radius:99px;padding:5px 12px;font-weight:700;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.25)}
 .hv{position:relative;width:22px;height:22px}.hv i{position:absolute;inset:0;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 0 0 2px var(--c),0 2px 8px rgba(0,0,0,.4);animation:hvp 1.1s ease-out infinite}.hv .plb{left:26px;top:-1px}
 @keyframes hvp{0%{box-shadow:0 0 0 2px var(--c),0 0 0 2px var(--c)}100%{box-shadow:0 0 0 2px var(--c),0 0 0 16px transparent}}
 .compass{position:absolute;right:10px;bottom:30px;z-index:500;background:#fff;border-radius:99px;padding:2px 9px;font-weight:800;font-size:11px;box-shadow:0 1px 5px rgba(0,0,0,.2)}
@@ -199,6 +199,12 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .costline{margin-top:8px;font-size:12.5px;background:#f5f9f0;border:1px solid #cfe5bb;border-radius:12px;padding:6px 10px}
 .tag.c{background:#fff3d6;color:#92400e}
 .bt{margin:6px 0;font-size:12.5px}.bt th{background:#f1f5f9}.bmsg{margin:6px 0 0;font-size:13px}.ok{color:#0b6f63}.bad{color:#b91c1c}
+@media(max-width:899px){#side{order:1}#mapcol{order:2}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
+@media(hover:none){#mhint{display:none}.trh span{display:none}}
+.fab{position:fixed;right:14px;bottom:18px;z-index:70;background:var(--navy);color:#fff;border-radius:99px;padding:10px 16px;font-weight:800;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.3);display:none}
+@media(max-width:899px){.fab{display:block}.fab[hidden]{display:none!important}#toast{bottom:76px}}
+.pill.sm{font-size:10.5px;padding:0 7px;margin-left:4px;vertical-align:1px}
+.ied{margin-bottom:4px}.ied .edbar{margin:6px 0}.edbar input[type=text].wide{flex:1 1 220px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head>
 <body>
@@ -219,7 +225,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
   <div class="grid" id="grid">
     <section id="mapcol" aria-label="지도">
       <div class="mw"><div id="map" role="application" aria-label="푸꾸옥 지도"></div>
-        <button class="mtype" id="mtype" data-act="mtype" aria-label="지도 종류 전환">🛰 위성</button><span class="mchip" id="mchip">오늘의 동선 · 북쪽 ↑</span><span class="compass">N ↑</span>
+        <div class="mctl"><button class="mtype" id="mtype" data-act="mtype" aria-label="지도 종류 전환">🛰 위성</button><button class="mtype" id="azbtn" data-act="azoom" aria-label="자동 줌 켜기/끄기">🔍 자동 줌 꺼짐</button></div><span class="mchip" id="mchip">오늘의 동선 · 북쪽 ↑</span><span class="compass">N ↑</span>
         <div class="mfail" id="mfail" hidden>지도를 불러오지 못했어요.<br>인터넷 연결을 확인하고 새로고침해 주세요.</div></div>
       <div class="seg" id="seg" role="group" aria-label="지도 범위"><button data-act="scope" data-k="route" aria-pressed="true">오늘 동선</button><button data-act="scope" data-k="all" aria-pressed="false">섬 전체</button></div>
       <p class="hint" id="mhint">핀 끝점이 실제 좌표예요. 핀에 마우스를 올리면 상세, 두 손가락으로 확대할 수 있어요.</p>
@@ -230,7 +236,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 </main>
 <footer>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
 </div>
-<div id="tip" hidden></div><div id="big" hidden></div><div id="toast" hidden></div>
+<button class="fab" id="fab" data-act="fab" hidden>🗺 지도 보기</button><div id="tip" hidden></div><div id="big" hidden></div><div id="toast" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 <script>
@@ -239,7 +245,7 @@ window.addEventListener('error',function(e){var f=document.getElementById('fb');
 "use strict";
 const $=(s,r)=>(r||document).querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const CAT={sight:['관광','#2b6fd6'],food:['음식점','#e8761f'],cafe:['카페','#8b5a3c'],shop:['쇼핑','#8e44c9'],cloth:['옷 쇼핑','#d6336c'],spa:['마사지','#1f9d6b'],stay:['숙소','#3c4a4d'],med:['병원','#d92d2d'],move:['교통','#7a8a8d']};
+const CAT={sight:['관광','#2b6fd6'],food:['음식점','#e8761f'],cafe:['카페','#8b5a3c'],shop:['쇼핑','#8e44c9'],cloth:['옷 쇼핑','#d6336c'],spa:['마사지','#1f9d6b'],stay:['숙소','#3c4a4d'],med:['병원','#d92d2d'],move:['교통','#7a8a8d'],etc:['기타·휴식','#64748b']};
 const FILT=['sight','food','cafe','shop','cloth','spa','med','stay'];
 /* ---------- storage ---------- */
 const store={get(k,d){try{const v=localStorage.getItem('pq_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('pq_'+k,JSON.stringify(v))}catch(e){}}};
@@ -421,7 +427,7 @@ const EXTRA=[
  {hero:'Phu Quoc, Viet Nam.jpg',cap:'푸꾸옥',kicker:'귀국 · 20:45 출발',sub:'체크아웃 후 마지막 쇼핑, 17:45쯤 공항으로.',todo:['여권·탑승권','기념품 포장·수하물 무게','체크아웃·짐 보관 확인']}];
 Object.values(P).forEach(q=>{if(q.cat!=='food'&&q.cat!=='cafe')q.ap=1});
 /* ---------- state & helpers ---------- */
-const S={view:'plan',spot:'',day:0,scope:'route',focus:0,pick:null,open:{},prev:{},sel:{},tray:'sight',zero:0,trayOpen:store.get('trayopen',true)!==false,addOpen:false,edOpen:false,heroOpen:false,picking:null,daysOpen:store.get('daysopen',true)!==false,rainOpen:false,budOpen:false,cats:new Set(FILT),chk:store.get('chk2',{}),ck:store.get('ck3',{})};
+const S={view:'plan',spot:'',day:0,scope:'route',focus:0,pick:null,open:{},prev:{},sel:{},tray:'sight',zero:0,trayOpen:store.get('trayopen',null)===null?innerWidth>=700:store.get('trayopen')!==false,autoZoom:store.get('autozoom',false)===true,fitKey:'',addOpen:false,edOpen:false,heroOpen:false,picking:null,daysOpen:store.get('daysopen',true)!==false,rainOpen:false,budOpen:false,cats:new Set(FILT),chk:store.get('chk2',{}),ck:store.get('ck3',{})};
 function hav(a,b){const R=6371,r=Math.PI/180,dl=(b.lat-a.lat)*r,dg=(b.lng-a.lng)*r,x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
 const km=(a,b)=>hav(a,b)*1.35;
 const lodgeP=()=>P[DAYS[S.day].lodge];
@@ -458,7 +464,7 @@ const HAS=typeof L!=='undefined';
 let map=null,layer=null,base=null,sat=null,hov=null,hovId=null;
 function hoverPlace(q){if(!map||!hov)return;hov.clearLayers();hovId=q?q.id:null;if(!q)return;
  hov.addLayer(L.marker([q.lat,q.lng],{icon:L.divIcon({className:'',html:'<div class="hv" style="--c:'+colOf(q)+'"><i></i><b class="plb">'+esc(q.name.replace(/\s*\(.*\)/,'').slice(0,18))+(q.ap?' · 대략':'')+'</b></div>',iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:1500,interactive:false}));
- try{if(!map.getBounds().contains([q.lat,q.lng]))map.panTo([q.lat,q.lng],{animate:true,duration:.4})}catch(e){}}
+ try{if(S.autoZoom&&!map.getBounds().contains([q.lat,q.lng]))map.panTo([q.lat,q.lng],{animate:true,duration:.4})}catch(e){}}
 function setMtBtn(){const b=$('#mtype');if(!b||!map)return;const on=map.hasLayer(sat);b.textContent=on?'🗺 지도':'🛰 위성';b.setAttribute('aria-pressed',on)}
 function toggleSat(){if(!map||!base||!sat)return;if(map.hasLayer(sat)){map.removeLayer(sat);base.addTo(map);store.set('mtype','map')}else{map.removeLayer(base);sat.addTo(map);store.set('mtype','sat')}setMtBtn()}
 const ISLAND=[[9.93,103.83],[10.41,104.10]];
@@ -486,7 +492,8 @@ function drawMap(fit){if(!map||!layer)return;layer.clearLayers();
   m.on('click',()=>{S.focus=ns[0]-1;S.pick=null;renderCard();drawMap(false)});layer.addLayer(m)});
  if(fit){if(S.view==='spots'||S.scope==='all')map.fitBounds(ISLAND,{padding:[10,10]});else if(pts.length>1)map.fitBounds(pts,{padding:[56,56],maxZoom:14});else if(pts.length===1)map.setView(pts[0],14)}}
 function cardPick(){if(S.pick&&P[S.pick])return P[S.pick];if(S.view==='plan'){const rp=routePts();if(rp.length){S.focus=Math.max(0,Math.min(S.focus,rp.length-1));return rp[S.focus].pl}}return null}
-function flyTo(q,z){if(map)map.flyTo([q.lat,q.lng],Math.max(map.getZoom(),z||15),{duration:.6})}
+function flyTo(q,z){if(!map)return;if(S.autoZoom)map.flyTo([q.lat,q.lng],Math.max(map.getZoom(),z||15),{duration:.6});else{try{if(!map.getBounds().contains([q.lat,q.lng]))map.panTo([q.lat,q.lng],{animate:true,duration:.4})}catch(e){}}}
+function setAzBtn(){const b=$('#azbtn');if(b){b.textContent=S.autoZoom?'🔍 자동 줌 켜짐':'🔍 자동 줌 꺼짐';b.setAttribute('aria-pressed',S.autoZoom)}}
 function renderCard(){const el=$('#pcard');if(!el)return;const isPlan=S.view==='plan';let h='';
  $('#seg').hidden=!isPlan;
  $('#mchip').textContent=(isPlan&&S.scope==='route'?'오늘의 동선':'푸꾸옥 전체')+' · 북쪽 ↑';
@@ -529,9 +536,12 @@ function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
  D.items.forEach((it,i)=>{const k=S.day+'_'+i,x=it.o[0],z=ch.out[i],pl=z.pl,c=CAT[oCat(x)][1],on=!!S.open[k];
   const alt=it.o.length-1;
   h+='<div class="it'+(on?' on':'')+'" data-i="'+i+'"><div class="ihw"><span class="gr" data-i="'+i+'" role="button" aria-label="끌어서 순서 바꾸기" title="끌어서 이동">'+GRIP+'</span><button class="ih" data-act="open" data-k="'+k+'" aria-expanded="'+on+'">'+(pl?thumb(pl,'',z.num):ntb(oCat(x)))+
-   '<span class="ix"><span class="tm">'+esc(it.tm)+'</span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(itCost(it)>0?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button></div>';
+   '<span class="ix"><span class="tm">'+esc(it.tm)+' <span class="pill sm" style="--c:'+CAT[oCat(x)][1]+'">'+CAT[oCat(x)][0]+'</span></span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(itCost(it)>0?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button></div>';
   if(on){h+='<div class="body">';
-   h+='<div class="edbar"><label class="ds" for="tm'+k+'">시간</label><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" style="width:auto"><button class="btn" data-act="mv" data-k="'+k+'" data-dir="-1"'+(i===0?' disabled':'')+'>▲ 위로</button><button class="btn" data-act="mv" data-k="'+k+'" data-dir="1"'+(i===D.items.length-1?' disabled':'')+'>▼ 아래로</button><button class="btn d" data-act="del" data-k="'+k+'">삭제</button></div><div class="edbar"><label class="ds" for="cs'+k+'">예상 비용(동)</label><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="'+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" style="width:130px"><span class="mut">비워 두면 추정값</span></div>';
+   h+='<div class="ied"><div class="edbar"><input type="text" class="wide" data-act="etitle" data-k="'+k+'" value="'+esc(oTitle(x))+'" placeholder="일정 이름" aria-label="일정 이름"></div>'+
+    '<div class="edbar"><select data-act="ecat" data-k="'+k+'" aria-label="일정 종류" style="width:auto">'+Object.keys(CAT).map(ck=>'<option value="'+ck+'"'+(ck===oCat(x)?' selected':'')+'>'+CAT[ck][0]+'</option>').join('')+'</select><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" aria-label="시간" style="width:auto"><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="비용(동) '+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" aria-label="예상 비용(동)" style="width:150px"></div>'+
+    '<div class="edbar"><input type="text" class="wide" data-act="ewhy" data-k="'+k+'" value="'+esc(x.why||'')+'" placeholder="메모·설명" aria-label="메모"></div>'+
+    '<div class="edbar"><button class="btn" data-act="mv" data-k="'+k+'" data-dir="-1"'+(i===0?' disabled':'')+'>▲ 위로</button><button class="btn" data-act="mv" data-k="'+k+'" data-dir="1"'+(i===D.items.length-1?' disabled':'')+'>▼ 아래로</button><button class="btn d" data-act="del" data-k="'+k+'">삭제</button><span class="mut">비용을 비우면 추정값</span></div></div>';
    if(pl)h+=det(pl,true);else h+='<p>'+esc(x.why||oTitle(x))+'</p>';
    if(alt){h+='<div class="alt"><span class="lb">예비 일정</span>';it.o.forEach((a,ai)=>{if(ai===0)return;h+='<button class="chip" data-act="prev" data-k="'+k+'" data-i="'+ai+'" style="--c:'+CAT[oCat(a)][1]+'" aria-pressed="'+(S.prev[k]===ai)+'">'+esc(oTitle(a))+'</button>'});h+='</div>';
     if(S.prev[k]!=null){const a=it.o[S.prev[k]],ap=oPlace(a);h+='<div class="body">'+(ap?det(ap,true):'<div class="dh"><b>'+esc(oTitle(a))+'</b></div>')+(a.why?'<p>'+esc(a.why)+'</p>':'')+'<div class="lk"><button class="btn p" data-act="swap" data-k="'+k+'" data-i="'+S.prev[k]+'">이 일정으로 교체</button><button class="btn" data-act="prev" data-k="'+k+'" data-i="'+S.prev[k]+'">닫기</button></div></div>'}}
@@ -571,7 +581,7 @@ const PKEY='plan3';
 function cleanItems(arr,ext){if(!Array.isArray(arr))return null;const out=[];
  for(const it of arr){if(!it||typeof it.tm!=='string'||!Array.isArray(it.o))return null;const o2=[];
   for(const x of it.o){if(!x||typeof x!=='object')return null;
-   if(x.id){if(!P[x.id]&&!(ext&&ext.has(x.id)))return null;const y={id:String(x.id)};if(x.t)y.t=String(x.t).slice(0,80);if(x.why)y.why=String(x.why).slice(0,200);o2.push(y)}
+   if(x.id){if(!P[x.id]&&!(ext&&ext.has(x.id)))return null;const y={id:String(x.id)};if(x.t)y.t=String(x.t).slice(0,80);if(CAT[x.c])y.c=x.c;if(x.why)y.why=String(x.why).slice(0,200);o2.push(y)}
    else if(typeof x.t==='string'){o2.push({t:x.t.slice(0,80),c:CAT[x.c]?x.c:'move',why:String(x.why||'').slice(0,200)})}
    else return null}
   if(!o2.length)return null;const ni={tm:it.tm.slice(0,5),o:o2},cs=numIn(it.cost,0,1e9);if(cs!=null)ni.cost=cs;out.push(ni)}
@@ -627,6 +637,8 @@ function insertItem(di,pid,to){const a=DAYS[di].items;a.splice(to,0,{tm:slotTime
 function sortByTime(di){const a=DAYS[di].items.map((it,i)=>[it,i]);a.sort((x,y)=>{const p=toMin(x[0].tm),q=toMin(y[0].tm);return ((p==null?9999:p)-(q==null?9999:q))||(x[1]-y[1])});DAYS[di].items=a.map(x=>x[0])}
 const TRAY=[['sight','관광'],['food','맛집'],['cafe','카페'],['shop','쇼핑'],['spa','마사지']];
 const trayCat=q=>S.tray==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===S.tray;
+function fabUpdate(){const f=$('#fab');if(!f)return;const on=S.view==='plan'||S.view==='spots';f.hidden=!on;if(!on)return;const r=$('#mapcol').getBoundingClientRect(),inMap=r.top<innerHeight*0.55&&r.bottom>innerHeight*0.3;f.textContent=inMap?'📋 일정·목록 보기':'🗺 지도 보기';f.dataset.mode=inMap?'plan':'map'}
+window.addEventListener('scroll',fabUpdate,{passive:true});
 function renderTray(){const w=$('#trayWrap');if(!w)return;w.hidden=S.view!=='plan';if(w.hidden)return;
  const old=w.querySelector('.tscroll'),sl=old?old.scrollLeft:0,lp=lodgeP();
  const used=new Set(DAYS[S.day].items.map(it=>it.o[0].id).filter(Boolean));
@@ -734,7 +746,8 @@ function render(){renderTabs();renderDays();renderHero();renderTray();const mapO
  if(S.view==='spots'){S.scope='all'}
  $('#mapcol').hidden=!mapOn;$('#grid').className='grid'+(mapOn?'':' one');
  $('#side').innerHTML=({plan:sPlan,spots:sSpots,talk:sTalk,info:sInfo}[S.view]||sPlan)();
- if(mapOn){renderCard();if(map){setTimeout(()=>{map.invalidateSize();drawMap(true)},30)}}
+ if(mapOn){renderCard();if(map){const fk=S.day+S.view;const fit=S.autoZoom||S.fitKey!==fk;S.fitKey=fk;setTimeout(()=>{map.invalidateSize();drawMap(fit)},30)}}
+ setAzBtn();fabUpdate();
  const qs=new URLSearchParams();qs.set('day',DATES[S.day]);qs.set('view',S.view);try{history.replaceState(null,'','?'+qs.toString()+location.hash)}catch(e){}}
 /* ---------- tooltip for list rows ---------- */
 const tip=$('#tip');let tipId=null;
@@ -761,6 +774,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='prev'){S.prev[k]=(S.prev[k]===i)?null:i;if(S.prev[k]==null)delete S.prev[k];render()}
  else if(a==='swap'){const ds=k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];it.o.unshift(it.o.splice(i,1)[0]);savePlan();delete S.prev[k];S.open={};S.open[k]=true;render();toast('교체했어요. 이동거리를 다시 계산했어요')}
  else if(a==='mtype'){toggleSat()}
+ else if(a==='fab'){const f=$('#fab'),t=f.dataset.mode==='plan'?$('#side'):$('#mapcol');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}
+ else if(a==='azoom'){S.autoZoom=!S.autoZoom;store.set('autozoom',S.autoZoom);setAzBtn();toast(S.autoZoom?'장소를 누르면 지도가 자동으로 이동·확대돼요':'자동 줌을 껐어요. 지도는 직접 확대하세요')}
  else if(a==='daystog'){S.daysOpen=!S.daysOpen;store.set('daysopen',S.daysOpen);render()}
  else if(a==='rainsug'){S.rainOpen=!S.rainOpen;render()}
  else if(a==='rainswap'){const ds=k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(!it)return;const id=b.dataset.id;
@@ -805,7 +820,11 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='mic')mic();else if(a==='find')findPh();else if(a==='online')online();
  else if(a==='slot'){const s=SL[i],j=+$('#sl'+i).value,it=s[3][j],vi=s[1]+it[1]+s[2]+s[4];$('#slres').innerHTML=phraseRow([it[0]+' '+s[0],vi.replace(/\s+\./,'.').replace(/\s+\?/,'?')])}
  else if(a==='say')speak(b.dataset.t);else if(a==='big')big(b.dataset.k,b.dataset.t)});
-document.addEventListener('change',e=>{const d=e.target.dataset;if(!d)return;if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
+document.addEventListener('change',e=>{const d=e.target.dataset;if(!d)return;if(d.act==='etitle'||d.act==='ecat'||d.act==='ewhy'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it){const x=it.o[0],v=e.target.value.trim();
+  if(d.act==='etitle'){if(v)x.t=v.slice(0,80);else if(x.id)delete x.t}
+  else if(d.act==='ecat'){if(CAT[e.target.value])x.c=e.target.value}
+  else{if(v)x.why=v.slice(0,200);else delete x.why}
+  savePlan();render()}}else if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
 document.addEventListener('input',e=>{const id=e.target.id,v=parseFloat(e.target.value);if(id==='memo')store.set('memo',e.target.value);
  else if(id==='fxrate'){FX.manual=v>0?v:undefined;store.set('fx1',FX);updBud()}
  else if(id==='bkrw'){$('#bvnd').value=v>0?Math.round(v*rate()):''}
@@ -813,9 +832,9 @@ document.addEventListener('input',e=>{const id=e.target.id,v=parseFloat(e.target
  else if(id==='budget'){FX.budget=e.target.value;store.set('fx1',FX);updBud()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#big').hidden=true;if(e.key==='Enter'&&e.target.id==='q')findPh();if(e.key==='Enter'&&e.target.id==='tdnew')document.querySelector('[data-act=tda]').click();if(e.key==='Enter'&&e.target.id==='hurl')document.querySelector('[data-act=heroset]').click()});
 document.addEventListener('toggle',e=>{if(e.target.id==='addd')S.addOpen=e.target.open;if(e.target.id==='edd')S.edOpen=e.target.open;if(e.target.id==='bud')S.budOpen=e.target.open},true);
-document.addEventListener('mouseover',e=>{if(drag&&drag.active)return;const t=e.target.closest('.row[data-id],.tc[data-pid]');const id=t&&(t.dataset.id||t.dataset.pid);if(id&&P[id])showTip(P[id],e)});
+document.addEventListener('mouseover',e=>{if(drag&&drag.active)return;const t=e.target.closest('.row[data-id]');const id=t&&t.dataset.id;if(id&&P[id])showTip(P[id],e)});
 document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('.tc[data-pid]');if(t){if(!(drag&&drag.active)&&hovId!==t.dataset.pid)hoverPlace(P[t.dataset.pid])}else if(hovId)hoverPlace(null)});
-document.addEventListener('mousemove',e=>{if(drag&&drag.active){hideTip();return}const t=e.target.closest('.row[data-id],.tc[data-pid]');if(t)moveTip(e);else hideTip()});
+document.addEventListener('mousemove',e=>{if(drag&&drag.active){hideTip();return}const t=e.target.closest('.row[data-id]');if(t)moveTip(e);else hideTip()});
 /* ---------- boot ---------- */
 (function(){
  const now=new Date(),t0=new Date(2026,10,7),dd=Math.ceil((t0-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5);
