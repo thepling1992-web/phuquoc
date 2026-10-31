@@ -205,6 +205,8 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 @media(max-width:899px){.fab{display:block}.fab[hidden]{display:none!important}#toast{bottom:76px}}
 .pill.sm{font-size:10.5px;padding:0 7px;margin-left:4px;vertical-align:1px}
 .ied{margin-bottom:4px}.ied .edbar{margin:6px 0}.edbar input[type=text].wide{flex:1 1 220px}
+.cand{margin:6px 0 8px;border:1px solid var(--ln);border-radius:14px;padding:8px 10px;background:#fafcfc}.cand .lb{font-size:12px;color:var(--mut)}
+.cc{flex:0 0 auto;display:flex;gap:8px;align-items:center;border:1px solid var(--c);border-radius:14px;background:#fff;padding:5px 10px 5px 5px;text-align:left;max-width:210px}.cc b{font-size:12.5px;display:block;line-height:1.25}.cc small{color:var(--mut);font-size:11px}.cc .th.sm{width:46px;height:46px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head>
 <body>
@@ -542,6 +544,7 @@ function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
     '<div class="edbar"><select data-act="ecat" data-k="'+k+'" aria-label="일정 종류" style="width:auto">'+Object.keys(CAT).map(ck=>'<option value="'+ck+'"'+(ck===oCat(x)?' selected':'')+'>'+CAT[ck][0]+'</option>').join('')+'</select><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" aria-label="시간" style="width:auto"><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="비용(동) '+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" aria-label="예상 비용(동)" style="width:150px"></div>'+
     '<div class="edbar"><input type="text" class="wide" data-act="ewhy" data-k="'+k+'" value="'+esc(x.why||'')+'" placeholder="메모·설명" aria-label="메모"></div>'+
     '<div class="edbar"><button class="btn" data-act="mv" data-k="'+k+'" data-dir="-1"'+(i===0?' disabled':'')+'>▲ 위로</button><button class="btn" data-act="mv" data-k="'+k+'" data-dir="1"'+(i===D.items.length-1?' disabled':'')+'>▼ 아래로</button><button class="btn d" data-act="del" data-k="'+k+'">삭제</button><span class="mut">비용을 비우면 추정값</span></div></div>';
+   h+=candBlock(k,x,pl);
    if(pl)h+=det(pl,true);else h+='<p>'+esc(x.why||oTitle(x))+'</p>';
    if(alt){h+='<div class="alt"><span class="lb">예비 일정</span>';it.o.forEach((a,ai)=>{if(ai===0)return;h+='<button class="chip" data-act="prev" data-k="'+k+'" data-i="'+ai+'" style="--c:'+CAT[oCat(a)][1]+'" aria-pressed="'+(S.prev[k]===ai)+'">'+esc(oTitle(a))+'</button>'});h+='</div>';
     if(S.prev[k]!=null){const a=it.o[S.prev[k]],ap=oPlace(a);h+='<div class="body">'+(ap?det(ap,true):'<div class="dh"><b>'+esc(oTitle(a))+'</b></div>')+(a.why?'<p>'+esc(a.why)+'</p>':'')+'<div class="lk"><button class="btn p" data-act="swap" data-k="'+k+'" data-i="'+S.prev[k]+'">이 일정으로 교체</button><button class="btn" data-act="prev" data-k="'+k+'" data-i="'+S.prev[k]+'">닫기</button></div></div>'}}
@@ -742,6 +745,10 @@ function wxBlock(){const w=WX&&WX[DATES[S.day]];let h='<div class="wx">';
  if(S.rainOpen)h+=rainPanel();return h+costLine()}
 function daySel(){const D=DAYS[S.day];let h='<div class="dsel"><button class="dtog" data-act="daystog" aria-expanded="'+S.daysOpen+'">📅 날짜 이동 · DAY '+(S.day+1)+' ('+D.d+') <span>'+(S.daysOpen?'접기 ▲':'펼치기 ▼')+'</span></button>';
  if(S.daysOpen)h+='<div class="dmini">'+DAYS.map((d,i)=>'<button class="dm2" data-act="day" data-i="'+i+'" aria-pressed="'+(i===S.day)+'">'+d.d.replace('/','.')+' <small>'+d.w+'</small></button>').join('')+'</div>';return h+'</div>'}
+function candBlock(k,x,pl){const cat=oCat(x),tc=cat==='cloth'?'shop':cat;
+ if(!TRAY.some(t=>t[0]===tc))return '<p class="hint" style="margin:6px 0">이 종류는 후보 목록이 없어요. 위에서 종류를 바꾸면 그 종류의 후보가 나와요.</p>';
+ const base=pl||lodgeP(),L=Object.values(P).filter(q=>tc==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===tc).filter(q=>q.id!==x.id).map(q=>({q,d:km(base,q)})).sort((a,b)=>a.d-b.d).slice(0,12);
+ return '<div class="cand"><b class="lb">'+CAT[tc][0]+' 후보 · 누르면 바로 교체 (가까운 순)</b><div class="tscroll">'+L.map(z=>'<button class="cc" data-act="candswap" data-k="'+k+'" data-id="'+z.q.id+'" style="--c:'+colOf(z.q)+'">'+thumb(z.q,'sm')+'<span><b>'+esc(z.q.name.replace(/\s*\(.*\)/,''))+'</b><small>'+z.d.toFixed(1)+'km</small></span></button>').join('')+'</div></div>'}
 function render(){renderTabs();renderDays();renderHero();renderTray();const mapOn=S.view==='plan'||S.view==='spots';
  if(S.view==='spots'){S.scope='all'}
  $('#mapcol').hidden=!mapOn;$('#grid').className='grid'+(mapOn?'':' one');
@@ -774,6 +781,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='prev'){S.prev[k]=(S.prev[k]===i)?null:i;if(S.prev[k]==null)delete S.prev[k];render()}
  else if(a==='swap'){const ds=k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];it.o.unshift(it.o.splice(i,1)[0]);savePlan();delete S.prev[k];S.open={};S.open[k]=true;render();toast('교체했어요. 이동거리를 다시 계산했어요')}
  else if(a==='mtype'){toggleSat()}
+ else if(a==='candswap'){const ds=k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],id=b.dataset.id;if(!it||!P[id])return;it.o.unshift({id,why:'후보에서 교체'});savePlan();S.open={};S.open[k]=true;render();toast('교체했어요 · 원래 일정은 예비에 남아 있어요')}
  else if(a==='fab'){const f=$('#fab'),t=f.dataset.mode==='plan'?$('#side'):$('#mapcol');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}
  else if(a==='azoom'){S.autoZoom=!S.autoZoom;store.set('autozoom',S.autoZoom);setAzBtn();toast(S.autoZoom?'장소를 누르면 지도가 자동으로 이동·확대돼요':'자동 줌을 껐어요. 지도는 직접 확대하세요')}
  else if(a==='daystog'){S.daysOpen=!S.daysOpen;store.set('daysopen',S.daysOpen);render()}
@@ -822,7 +830,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='say')speak(b.dataset.t);else if(a==='big')big(b.dataset.k,b.dataset.t)});
 document.addEventListener('change',e=>{const d=e.target.dataset;if(!d)return;if(d.act==='etitle'||d.act==='ecat'||d.act==='ewhy'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it){const x=it.o[0],v=e.target.value.trim();
   if(d.act==='etitle'){if(v)x.t=v.slice(0,80);else if(x.id)delete x.t}
-  else if(d.act==='ecat'){if(CAT[e.target.value])x.c=e.target.value}
+  else if(d.act==='ecat'){if(CAT[e.target.value]){x.c=e.target.value;const tcx=x.c==='cloth'?'shop':x.c;if(TRAY.some(t=>t[0]===tcx))S.tray=tcx}}
   else{if(v)x.why=v.slice(0,200);else delete x.why}
   savePlan();render()}}else if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
 document.addEventListener('input',e=>{const id=e.target.id,v=parseFloat(e.target.value);if(id==='memo')store.set('memo',e.target.value);
