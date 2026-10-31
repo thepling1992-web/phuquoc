@@ -199,7 +199,8 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .costline{margin-top:8px;font-size:12.5px;background:#f5f9f0;border:1px solid #cfe5bb;border-radius:12px;padding:6px 10px}
 .tag.c{background:#fff3d6;color:#92400e}
 .bt{margin:6px 0;font-size:12.5px}.bt th{background:#f1f5f9}.bmsg{margin:6px 0 0;font-size:13px}.ok{color:#0b6f63}.bad{color:#b91c1c}
-@media(max-width:899px){#side{order:1}#mapcol{order:2}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
+#trayWrap{grid-column:1/-1;order:-1;min-width:0}
+@media(max-width:899px){#trayWrap{grid-column:auto;order:2}#side{order:1}#mapcol{order:3}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
 @media(hover:none){#mhint{display:none}.trh span{display:none}}
 .fab{position:fixed;right:14px;bottom:18px;z-index:70;background:var(--navy);color:#fff;border-radius:99px;padding:10px 16px;font-weight:800;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.3);display:none}
 @media(max-width:899px){.fab{display:block}.fab[hidden]{display:none!important}#toast{bottom:76px}}
@@ -223,8 +224,8 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 <div id="days" class="days" hidden></div>
 <main id="main">
   <div id="heroSec" hidden></div>
-  <div id="trayWrap" hidden></div>
   <div class="grid" id="grid">
+    <div id="trayWrap" hidden></div>
     <section id="mapcol" aria-label="지도">
       <div class="mw"><div id="map" role="application" aria-label="푸꾸옥 지도"></div>
         <div class="mctl"><button class="mtype" id="mtype" data-act="mtype" aria-label="지도 종류 전환">🛰 위성</button><button class="mtype" id="azbtn" data-act="azoom" aria-label="자동 줌 켜기/끄기">🔍 자동 줌 꺼짐</button></div><span class="mchip" id="mchip">오늘의 동선 · 북쪽 ↑</span><span class="compass">N ↑</span>
