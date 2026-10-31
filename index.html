@@ -593,7 +593,7 @@ function cleanPlan(data,ext){if(!Array.isArray(data)||data.length!==DAYS.length)
 function applyPlan(pl){pl.forEach((a,i)=>{DAYS[i].items=a})}
 function savePlan(){store.set(PKEY,DAYS.map(d=>d.items))}
 const colOf=q=>(q&&q.color)||CAT[q.cat][1];
-const OK_CAT=['sight','food','cafe','shop','spa'];
+const OK_CAT=['sight','food','cafe','shop','spa','stay'];
 const hexOk=c=>/^#[0-9a-fA-F]{6}$/.test(c||'');
 const urlOk=u=>/^https?:\/\//i.test(u||'');
 const numIn=(v,a,b)=>{v=parseFloat(v);return isFinite(v)&&v>=a&&v<=b?v:null};
@@ -638,7 +638,7 @@ function slotTime(items,idx){const pm=idx>0?toMin(items[idx-1].tm):null,nm=idx<i
 function moveItem(di,from,to){const a=DAYS[di].items;let idx=to>from?to-1:to;if(idx===from)return false;const it=a.splice(from,1)[0];it.tm=slotTime(a,idx);a.splice(idx,0,it);return true}
 function insertItem(di,pid,to){const a=DAYS[di].items;a.splice(to,0,{tm:slotTime(a,to),o:[{id:pid}]})}
 function sortByTime(di){const a=DAYS[di].items.map((it,i)=>[it,i]);a.sort((x,y)=>{const p=toMin(x[0].tm),q=toMin(y[0].tm);return ((p==null?9999:p)-(q==null?9999:q))||(x[1]-y[1])});DAYS[di].items=a.map(x=>x[0])}
-const TRAY=[['sight','관광'],['food','맛집'],['cafe','카페'],['shop','쇼핑'],['spa','마사지']];
+const TRAY=[['sight','관광'],['food','맛집'],['cafe','카페'],['shop','쇼핑'],['spa','마사지'],['stay','숙소']];
 const trayCat=q=>S.tray==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===S.tray;
 function fabUpdate(){const f=$('#fab');if(!f)return;const on=S.view==='plan'||S.view==='spots';f.hidden=!on;if(!on)return;const r=$('#mapcol').getBoundingClientRect(),inMap=r.top<innerHeight*0.55&&r.bottom>innerHeight*0.3;f.textContent=inMap?'📋 일정·목록 보기':'🗺 지도 보기';f.dataset.mode=inMap?'plan':'map'}
 window.addEventListener('scroll',fabUpdate,{passive:true});
