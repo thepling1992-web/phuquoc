@@ -716,7 +716,8 @@ function renderTop(){const w=$('#topWrap');if(!w)return;w.hidden=S.view!=='plan'
  w.innerHTML=h+'</div>'}
 function placeTray(){const mc=$('#mapcol'),g=$('#grid'),t=$('#trayWrap'),u=$('#topWrap');if(!mc||!g||!t||!u)return;
  if(innerWidth>=900&&!g.classList.contains('one')){const c=$('#pcard');if(t.parentNode!==mc){mc.appendChild(t);mc.appendChild(u)}}
- else if(t.parentNode!==g){g.insertBefore(u,mc);g.insertBefore(t,u)}}
+ else if(t.parentNode!==g){g.insertBefore(u,mc);g.insertBefore(t,u)}
+ const pc=$('#pcard');if(pc&&pc.parentNode===mc&&mc.lastElementChild!==pc)mc.appendChild(pc)}
 addEventListener('resize',placeTray);
 /* drag & drop (pointer events: mouse + touch) */
 let drag=null,noClick=false;
