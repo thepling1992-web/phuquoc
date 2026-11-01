@@ -237,6 +237,9 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .tag.s{background:#fde8e8;color:#b42318}
 .spcat{margin-top:8px;display:grid;gap:5px}.spc{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;font-size:12px}.spc i,.spn i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.spb{height:8px;background:#eef2f4;border-radius:6px;overflow:hidden}.spb u{display:block;height:100%;border-radius:6px}
 .spday{margin-top:10px}.sprows{margin-top:6px}.spr{display:grid;grid-template-columns:44px 1fr 120px;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--ln);font-size:13px}.spr.ex{grid-template-columns:44px 1fr auto 28px}.spt{color:var(--amb);font-weight:700;font-size:12px}.spn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.spr input{width:100%;padding:5px 8px;font-size:13px}.spv{font-size:12.5px}
+.rmemo{display:block;width:calc(100% - 42px);margin:3px 0 1px 40px;padding:3px 8px;font-size:12px;border:1px dashed var(--ln);border-radius:8px;background:#fcfdfd;color:#475569}.rmemo:focus{border-style:solid;background:#fff}.rmemo::placeholder{color:#b6c0c8}
+.tcx{position:absolute;top:6px;width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--ln);font-size:12px;display:grid;place-items:center;z-index:3;box-shadow:0 1px 4px rgba(0,0,0,.25)}.tcx.e{right:34px}.tcx.d{right:6px;color:#b42318}
+.tef{margin:2px 4px 8px;padding:8px;border:1px solid var(--ln);border-radius:12px;background:#f8fbfc}
 </style></head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -269,7 +272,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
     <section id="extra" hidden></section>
   </div>
 </main>
-<footer><span style="display:block;font-size:10.5px;color:#94a3b8">버전 2026-11-01-r10</span>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
+<footer><span style="display:block;font-size:10.5px;color:#94a3b8">버전 2026-11-01-r13</span>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
 </div>
 <button class="fab" id="fab" data-act="fab" hidden>🗺 지도 보기</button><div id="tip" hidden></div><div id="big" hidden></div><div id="toast" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -382,46 +385,68 @@ p('sunhosp','med','Sun Group 국제병원',10.0200,104.0050,'남부','An Thới.
 
 /* ---------- itinerary ---------- */
 const o=(id,t,why)=>({id,t,why});
+const oc=(id,t,c)=>({id,t,c});const tx=(t,c)=>({t,c});
 const DAYS=[
  {d:'11/7',w:'토',name:'새벽 도착 · 휴식',lodge:'salinda',note:'새벽 비행 직후라 컨디션이 우선이에요. 체크인은 14:00라 짐부터 맡기고, 얼리 체크인은 미리 요청해 보세요(보장은 아니에요).',items:[
   {tm:'06:00',o:[o('airport','푸꾸옥 도착 · 입국 수속','한국 02:00 출발 → 06:00 도착. 입국 심사·수하물에 약 1시간'),{t:'공항 카페에서 쉬며 셔틀 기다리기',c:'move',why:'짐이 늦게 나올 때'}]},
-  {tm:'07:30',o:[o('salinda','살린다 도착 · 짐 맡기고 조식','무료 공항 셔틀(항공편 사전 전달) 또는 택시, 약 5km'),{t:'객실이 비어 있으면 먼저 체크인 요청',c:'stay',why:'14:00 이전 입실은 객실 상황에 따라 달라요'}]},
-  {tm:'09:30',o:[o('salinda','수영장·해변 가볍게 쉬기','물장구 정도로 가볍게'),{t:'로비·라운지에서 눈 붙이기',c:'stay',why:'밤샘 비행 후 피로 회복'},o('salinda','살린다 스파 트리트먼트','리조트 내 스파(가격이 다소 높은 편)')]},
-  {tm:'12:00',o:[o('bunken'),o('bepbien'),o('saigonese'),o('meo')]},
-  {tm:'14:00',o:[o('salinda','체크인 · 객실 낮잠','체크인 14:00. 비행 피로 풀기'),{t:'수영장 선베드에서 쉬기',c:'stay',why:'가볍게 몸 풀기'}]},
-  {tm:'16:30',o:[o('kingkong','킹콩마트 본점 쇼핑','선크림·기피제·생수·간식 구입, 약 1시간'),o('hongsi','Hong Si Coffee 쉬어가기','소금 커피(카페인 주의)'),o('yuju','유주 스파 마사지','킹콩마트 근처에서 쉬어가기')]},
-  {tm:'18:30',o:[o('buncha'),o('saigonese'),o('bepbien'),o('meo')]},
+  {tm:'07:30',o:[o('salinda'),{t:'객실이 비어 있으면 먼저 체크인 요청',c:'stay',why:'14:00 이전 입실은 객실 상황에 따라 달라요'}]},
+  {tm:'10:45',o:[o('meo')]},
+  {tm:'12:35',o:[o('anba')]},
+  {tm:'12:45',o:[o('yuju')]},
+  {tm:'12:45',o:[o('buncha')]},
+  {tm:'12:45',o:[tx('phuong hoang seafood','food')]},
+  {tm:'12:50',o:[o('kingkong','킹콩마트 본점 쇼핑')]},
+  {tm:'13:20',o:[o('cl_kk')]},
+  {tm:'12:50',o:[o('salinda','수영장·객실 낮잠')]},
+  {tm:'13:05',o:[tx('저녁 뭐먹지','food')]},
+  {tm:'13:15',o:[tx('불쇼 비치 바,클럽','food')]},
   {tm:'20:00',o:[o('salinda','숙소 복귀 · 일찍 휴식')]}]},
  {d:'11/8',w:'일',name:'사파리 + 그랜드월드',lodge:'salinda',note:'이번 여행에서 가장 먼 이동(왕복 약 50km 이상)입니다. 차량 대절을 권장하고, Vinmec 본원이 그랜드월드 근처에 있어요.',items:[
   {tm:'08:30',o:[o('salinda','호텔 조식 후 출발')]},
-  {tm:'09:00',o:[o('safari','빈펄 사파리','전동카트·셔틀 위주, 약 3시간'),o('grandworld','사파리 단축 후 그랜드월드 연장','대기가 길거나 더우면 사파리 2시간만'),o('grandworld','그랜드월드 실내 위주 + 테디베어 박물관 등','사파리가 힘들 때 대체')]},
-  {tm:'12:30',o:[o('botor'),o('maihuong'),o('jmt'),o('vua'),o('masala')]},
-  {tm:'14:00',o:[o('grandworld','그랜드월드 산책','운하·야경은 선선할 때'),o('cl_gw','그랜드월드 상점가 옷 쇼핑','실내라 시원'),o('olivea','Olivea Coffee 휴식'),o('hana','HANA Coffee 휴식')]},
-  {tm:'15:30',o:[o('salinda','숙소 복귀·낮잠'),o('yuju','유주 스파 마사지','복귀 길에 쉬어가기')]},
-  {tm:'18:30',o:[o('bunken'),o('bepbien'),o('meo'),o('saigonese')]}]},
+  {tm:'09:00',o:[o('safari','빈펄 사파리','전동카트·셔틀 위주, 약 3시간')]},
+  {tm:'11:30',o:[o('jmt')]},
+  {tm:'12:45',o:[o('botor')]},
+  {tm:'14:00',o:[o('grandworld','그랜드월드 산책','운하·야경은 선선할 때')]},
+  {tm:'14:20',o:[o('olivea')]},
+  {tm:'14:20',o:[o('vua')]},
+  {tm:'14:20',o:[o('maihuong')]},
+  {tm:'14:25',o:[oc('nightmkt','즈엉동야시장','shop')]},
+  {tm:'14:45',o:[o('chuon')]},
+  {tm:'15:00',o:[tx('불쇼 비치 바,클럽','food')]},
+  {tm:'15:30',o:[o('salinda','숙소 복귀·낮잠'),o('yuju','유주 스파 마사지','복귀 길에 쉬어가기')]}]},
  {d:'11/9',w:'월',name:'체크아웃 · 이동 + 야시장',lodge:'sonasea',note:'살린다 체크아웃(12:00) → 소나시 체크인(15:00). 이동 거리는 짧지만 짐 정리 시간을 넉넉히 잡으세요.',items:[
   {tm:'08:00',o:[o('salinda','조식 · 마지막 해변 산책'),o('salinda','해수 인피니티 풀','해변 물이 탁하거나 파도가 높을 때')]},
-  {tm:'11:00',o:[o('salinda','살린다 체크아웃 (12:00 전)','짐 정리 후 소나시로 이동, 약 4~6km'),o('sonasea','소나시에 먼저 짐 맡기기','15:00 체크인 전 짐 보관 요청')]},
-  {tm:'12:00',o:[o('kienxay'),o('buncha'),o('meo'),o('bepbien')]},
-  {tm:'14:00',o:[o('cua','Cua Cafe 쉬어가기'),o('hongsi','Hong Si Coffee 쉬어가기'),o('cl_gb','The Green Boutique 구경')]},
-  {tm:'15:30',o:[o('sonasea','소나시 체크인 · 수영장','체크인 15:00. 객실 휴식 후 가볍게 수영'),o('raon','라온스파 마사지','소나시 근처')]},
-  {tm:'17:30',o:[o('nightmkt','즈엉동 야시장 구경','해 질 무렵부터 약 1.5시간'),o('cl_nm','야시장 의류 노점 쇼핑','리넨 원피스·비치웨어'),o('kk_nm','킹콩마트 야시장 지점','기념품 마무리'),o('cl_sn','소나시 야시장 가벼운 쇼핑','숙소 근처')]},
-  {tm:'19:00',o:[o('rakhoi'),o('vinhxanh'),o('crabhouse'),o('xinchao')]},
+  {tm:'11:00',o:[o('salinda','살린다 체크아웃 (12:00 전)','짐 정리 후 소나시로 이동, 약 4~6km')]},
+  {tm:'11:35',o:[o('chuon')]},
+  {tm:'11:35',o:[o('anba')]},
+  {tm:'11:40',o:[o('sonasea','소나시 체크인 · 수영장','체크인 15:00. 객실 휴식 후 가볍게 수영')]},
+  {tm:'11:45',o:[o('bepan')]},
+  {tm:'11:55',o:[o('ricordo')]},
+  {tm:'13:40',o:[o('sonasea')]},
+  {tm:'14:35',o:[o('raon')]},
+  {tm:'15:25',o:[o('cl_sn')]},
   {tm:'20:30',o:[o('sonasea','소나시 복귀')]}]},
  {d:'11/10',w:'화',name:'해변·수영장 + 남부 선셋',lodge:'sonasea',note:'소나시에서 선셋타운까지 편도 약 20km입니다. 컨디션이 안 좋으면 호텔 앞 일몰(B안)로 바꾸세요.',items:[
   {tm:'08:30',o:[o('sonasea','호텔 조식 · 롱비치 산책'),o('sonasea','대형 수영장에서 여유','해변 물이 탁할 때')]},
-  {tm:'10:30',o:[o('sonasea','수영장·선베드 휴식'),{t:'객실 휴식',c:'stay',why:'오후 이동 전 체력 비축'}]},
-  {tm:'12:30',o:[o('meo'),o('bepan'),o('ricordo')]},
-  {tm:'14:30',o:[{t:'객실 휴식·낮잠',c:'stay',why:'일몰 전 체력 비축'},o('raon','라온스파 마사지'),o('cl_sn','소나시 야시장 가벼운 쇼핑')]},
-  {tm:'16:30',o:[o('sunset','선셋타운·키스브릿지 일몰 (A안)'),o('sonasea','호텔 앞 해변 일몰 (B안)','이동 0km, 가장 편한 선택'),o('cable','혼똔섬 케이블카','비추천·선택'),o('sao','사오비치','멀어서 비추천')]},
-  {tm:'18:30',o:[o('thskitchen'),o('comdidi'),o('ricordo'),o('bepan')]},
-  {tm:'20:00',o:[o('sonasea','소나시 복귀')]}]},
+  {tm:'23:40',o:[o('cable')]},
+  {tm:'23:40',o:[oc('cable','망고 레스토랑','food')]},
+  {tm:'23:55',o:[oc('cable','워터파크,','sight')]},
+  {tm:'23:40',o:[o('cable')]},
+  {tm:'23:45',o:[o('sunset','선셋타운·키스브릿지 일몰 (A안)')]},
+  {tm:'23:50',o:[o('comdidi')]},
+  {tm:'23:55',o:[o('thskitchen')]},
+  {tm:'23:45',o:[o('runam')]},
+  {tm:'23:50',o:[o('juliet')]},
+  {tm:'23:55',o:[o('sonasea','소나시 복귀')]}]},
  {d:'11/11',w:'수',name:'마지막 날 · 20:45 출국',lodge:'sonasea',night:false,note:'체크아웃 12:00, 항공 출발 20:45(한국 04:00 도착). 짐은 프런트에 맡기고 공항에는 17:45쯤 도착하는 것을 기준으로 잡았어요.',items:[
   {tm:'08:00',o:[o('sonasea','조식 · 수영장 마지막 시간')]},
-  {tm:'11:00',o:[o('sonasea','체크아웃 (12:00 전) · 짐 보관','프런트에 짐 보관과 공항 셔틀 시간을 확인하세요')]},
-  {tm:'12:00',o:[o('bepan'),o('meo'),o('ricordo')]},
-  {tm:'14:00',o:[o('kingkong','킹콩마트 마지막 쇼핑','남은 선물 구입, 짐 무게 확인'),o('raon','라온스파 마사지'),o('yuju','유주 스파 (공항 픽업)'),o('spael','스파 더엘 (공항 샌딩·짐 보관)','남부라 멀어요')]},
-  {tm:'16:00',o:[o('cua'),o('hongsi'),o('anba')]},
+  {tm:'09:30',o:[o('raon')]},
+  {tm:'13:15',o:[o('ricordo')]},
+  {tm:'13:40',o:[o('bepan')]},
+  {tm:'14:20',o:[o('sonasea','체크아웃')]},
+  {tm:'15:00',o:[o('kk_nm')]},
+  {tm:'15:30',o:[oc('nightmkt','즈엉동야시장','shop')]},
+  {tm:'15:55',o:[o('chuon')]},
   {tm:'17:45',o:[o('airport','공항 도착 · 탑승 수속','출발 3시간 전 도착 기준. 호텔 무료 셔틀 또는 택시'),{t:'호텔 로비에서 쉬다가 출발',c:'stay',why:'여유가 있을 때'}]},
   {tm:'20:45',o:[o('airport','푸꾸옥 출발 → 한국 04:00 도착','11/12 새벽 도착')]}]}
 ];
@@ -462,7 +487,7 @@ const EXTRA=[
  {hero:'Phu Quoc, Viet Nam.jpg',cap:'푸꾸옥',kicker:'귀국 · 20:45 출발',sub:'체크아웃 후 마지막 쇼핑, 17:45쯤 공항으로.',todo:['여권·탑승권','기념품 포장·수하물 무게','체크아웃·짐 보관 확인']}];
 Object.values(P).forEach(q=>{if(q.cat!=='food'&&q.cat!=='cafe'&&!q.fixed)q.ap=1});
 /* ---------- state & helpers ---------- */
-const S={view:'plan',spot:'',day:0,scope:'route',focus:0,pick:null,open:{},prev:{},sel:{},tray:'sight',zero:0,fold:store.get('fold1',{})||{},edit:true,zd:0,trayOpen:store.get('trayopen',null)===null?innerWidth>=700:store.get('trayopen')!==false,autoZoom:store.get('autozoom',false)===true,fitKey:'',addOpen:false,edOpen:false,heroOpen:false,picking:null,daysOpen:store.get('daysopen',true)!==false,rainOpen:false,budOpen:false,cats:new Set(FILT),chk:store.get('chk2',{}),ck:store.get('ck3',{})};
+const S={view:'plan',spot:'',day:0,scope:'route',focus:0,pick:null,open:{},prev:{},sel:{},tray:'sight',zero:0,fold:store.get('fold1',{})||{},edit:true,zd:0,trayEdit:false,teId:null,trayOpen:store.get('trayopen',null)===null?innerWidth>=700:store.get('trayopen')!==false,autoZoom:store.get('autozoom',false)===true,fitKey:'',addOpen:false,edOpen:false,heroOpen:false,picking:null,daysOpen:store.get('daysopen',true)!==false,rainOpen:false,budOpen:false,cats:new Set(FILT),chk:store.get('chk2',{}),ck:store.get('ck3',{})};
 function hav(a,b){const R=6371,r=Math.PI/180,dl=(b.lat-a.lat)*r,dg=(b.lng-a.lng)*r,x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
 const km=(a,b)=>hav(a,b)*1.35;
 const lodgeP=()=>P[DAYS[S.day].lodge];
@@ -574,7 +599,7 @@ function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
  (lf?[]:D.items).forEach((it,i)=>{const k=S.day+'_'+i,x=it.o[0],z=ch.out[i],pl=z.pl,c=CAT[oCat(x)][1],on=!!S.open[k];
   const alt=it.o.length-1;
   h+='<div class="it'+(on?' on':'')+'" data-i="'+i+'"><div class="ihw">'+(S.edit?'<span class="gr" data-i="'+i+'" role="button" aria-label="끌어서 순서 바꾸기" title="끌어서 이동">'+GRIP+'</span>':'')+'<button class="ih" data-act="open" data-k="'+k+'" aria-expanded="'+on+'">'+(pl?thumb(pl,'',z.num):ntb(oCat(x)))+
-   '<span class="ix"><span class="tm">'+esc(it.tm)+' <span class="pill sm" style="--c:'+CAT[oCat(x)][1]+'">'+CAT[oCat(x)][0]+'</span></span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(it.spent>0?'<span class="tag s">사용 '+shortV(it.spent)+'</span>':'')+(itCost(it)>0&&!(it.spent>0)?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button><button class="rdel" data-act="del" data-k="'+k+'" aria-label="이 일정 삭제" title="삭제">✕</button></div>';
+   '<span class="ix"><span class="tm">'+esc(it.tm)+' <span class="pill sm" style="--c:'+CAT[oCat(x)][1]+'">'+CAT[oCat(x)][0]+'</span></span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(it.spent>0?'<span class="tag s">사용 '+shortV(it.spent)+'</span>':'')+(itCost(it)>0&&!(it.spent>0)?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button><button class="rdel" data-act="del" data-k="'+k+'" aria-label="이 일정 삭제" title="삭제">✕</button></div><input type="text" class="rmemo" maxlength="60" value="'+esc(it.memo||'')+'" placeholder="✎ 한 줄 메모" data-act="memo" data-k="'+k+'" aria-label="한 줄 메모">';
   if(on){h+='<div class="body">';
    if(S.edit)h+='<div class="ied"><div class="edbar"><input type="text" class="wide" data-act="etitle" data-k="'+k+'" value="'+esc(oTitle(x))+'" placeholder="일정 이름" aria-label="일정 이름"></div>'+
     '<div class="edbar"><select data-act="ecat" data-k="'+k+'" aria-label="일정 종류" style="width:auto">'+Object.keys(CAT).map(ck=>'<option value="'+ck+'"'+(ck===oCat(x)?' selected':'')+'>'+CAT[ck][0]+'</option>').join('')+'</select><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" aria-label="시간" style="width:auto"><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="예상 비용(동) '+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" aria-label="예상 비용(동)" style="width:150px"></div>'+
@@ -587,7 +612,7 @@ function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
     if(S.prev[k]!=null){const a=it.o[S.prev[k]],ap=oPlace(a);h+='<div class="body">'+(ap?det(ap,true):'<div class="dh"><b>'+esc(oTitle(a))+'</b></div>')+(a.why?'<p>'+esc(a.why)+'</p>':'')+'<div class="lk"><button class="btn p" data-act="swap" data-k="'+k+'" data-i="'+S.prev[k]+'">이 일정으로 교체</button><button class="btn" data-act="prev" data-k="'+k+'" data-i="'+S.prev[k]+'">닫기</button></div></div>'}}
    h+='</div>'}
   h+='</div>'});
- h+=(lf?'':'</div>')+'<div class="lkrow"><button class="btn p" data-act="saverp">📍 지금 상태를 리셋 지점으로 저장</button><button class="btn" data-act="resetday">'+(S.zd?'한 번 더 누르면 이 날 리셋':'↺ 이 날 리셋')+'</button><button class="btn" data-act="resetall">'+(S.zero?'한 번 더 누르면 전체 리셋':'↺ 전체 리셋')+'</button><button class="btn" data-act="share">🔗 공유 링크 복사</button>'+(RP?'<button class="btn" data-act="clearrp">리셋 지점 해제(처음 기본값으로)</button>':'')+'</div><p class="hint" style="margin:6px 2px 0"><b>리셋</b>은 직접 고친 내용을 지우고 '+(RP?'내가 저장한 리셋 지점':'처음 제안한 일정')+'으로 되돌려요(사용 금액도 함께 지워져요). 일정을 완성했다면 📍로 리셋 지점을 저장해 두세요. 고친 내용은 바로 자동 저장돼요. 다른 기기로 옮기거나 백업하려면 공유 링크를 쓰세요.</p>';
+ h+=(lf?'':'</div>')+'<div class="lkrow"><button class="btn p" data-act="saverp">📍 지금 상태를 리셋 지점으로 저장</button><button class="btn" data-act="resetday">'+(S.zd?'한 번 더 누르면 이 날 리셋':'↺ 이 날 리셋')+'</button><button class="btn" data-act="resetall">'+(S.zero?'한 번 더 누르면 전체 리셋':'↺ 전체 리셋')+'</button><button class="btn" data-act="share">🔗 공유 링크 복사</button>'+(RP?'<button class="btn" data-act="clearrp">리셋 지점 해제(처음 기본값으로)</button>':'')+'</div><p class="hint" style="margin:6px 2px 0"><b>리셋</b>은 직접 고친 내용을 지우고 '+(RP?'내가 저장한 리셋 지점':'처음 제안한 일정')+'으로 되돌려요(사용 금액도 함께 지워져요). 일정을 완성했다면 📍로 리셋 지점을 저장해 두세요. 고친 내용은 바로 자동 저장돼요. 다른 기기로 옮기거나 백업하려면 공유 링크 또는 아래 코드를 쓰세요.</p><details class="addp" id="codeBox"><summary>📲 다른 기기로 옮기기 · 코드로 (링크가 안 될 때)</summary><div class="edb"><div class="edbar"><button class="btn p" data-act="codecopy">📋 이 기기 일정 코드 복사</button></div><p class="hint" style="margin:0">① 수정한 기기에서 위 버튼 → 카톡 "나와의 채팅"에 붙여넣기 ② 옮길 기기에서 코드를 길게 눌러 복사 → 아래 칸에 붙여넣고 "코드 적용"</p><div class="edbar"><textarea id="codein" rows="3" placeholder="여기에 코드(또는 공유 링크 전체)를 붙여넣기" style="flex:1 1 220px"></textarea></div><div class="edbar"><button class="btn" data-act="codeapply">코드 적용</button></div></div></details>';
  return h}
 function sPlanExtra(){let h='';const tf=S.fold.todo===true,mf=S.fold.memo===true;
  h+='<div class="two"><div class="card"><div class="fhead" style="margin:0"><h4 style="margin:0">오늘 챙길 것</h4>'+foldBtn('todo')+'</div>'+(tf?'':todosOf(S.day).map((t,i)=>'<div class="chk td"><input type="checkbox" data-act="ck" data-k="'+S.day+'_'+i+'"'+(S.ck[S.day+'_'+i]?' checked':'')+' aria-label="완료"><input type="text" class="tdi" data-act="tdt" data-k="'+S.day+'_'+i+'" value="'+esc(t)+'" aria-label="챙길 것"><button class="x" data-act="tdd" data-k="'+S.day+'_'+i+'" aria-label="삭제">×</button></div>').join('')+'<div class="edbar"><input type="text" id="tdnew" placeholder="챙길 것 추가" style="flex:1 1 120px"><button class="btn p" data-act="tda">추가</button></div>')+'</div>'+
@@ -642,7 +667,7 @@ function cleanItems(arr,ext){if(!Array.isArray(arr))return null;const out=[];
    if(x.id){if(!P[x.id]&&!(ext&&ext.has(x.id)))return null;const y={id:String(x.id)};if(x.t)y.t=String(x.t).slice(0,80);if(CAT[x.c])y.c=x.c;if(x.why)y.why=String(x.why).slice(0,200);o2.push(y)}
    else if(typeof x.t==='string'){o2.push({t:x.t.slice(0,80),c:CAT[x.c]?x.c:'move',why:String(x.why||'').slice(0,200)})}
    else return null}
-  if(!o2.length)return null;const ni={tm:it.tm.slice(0,5),o:o2},cs=numIn(it.cost,0,1e9),sp=numIn(it.spent,0,1e10);if(cs!=null)ni.cost=cs;if(sp!=null)ni.spent=sp;out.push(ni)}
+  if(!o2.length)return null;const ni={tm:it.tm.slice(0,5),o:o2},cs=numIn(it.cost,0,1e9),sp=numIn(it.spent,0,1e10);if(cs!=null)ni.cost=cs;if(sp!=null)ni.spent=sp;if(it.memo)ni.memo=String(it.memo).slice(0,60);out.push(ni)}
  return out}
 function cleanPlan(data,ext){if(!Array.isArray(data)||data.length!==DAYS.length)return null;const out=[];for(const d of data){const c=cleanItems(d,ext);if(!c)return null;out.push(c)}return out}
 function applyPlan(pl){pl.forEach((a,i)=>{DAYS[i].items=a})}
@@ -658,10 +683,11 @@ function cleanCust(c){if(!c||typeof c!=='object')return null;const lat=numIn(c.l
  if(hexOk(c.color))o.color=c.color;if(urlOk(c.photo)||/^data:image\//.test(c.photo||''))o.photo=c.photo;const r=numIn(c.rating,0.1,5);if(r!=null)o.rating=r;if(urlOk(c.menu))o.menu=String(c.menu).slice(0,500);if(o.cat==='food'||o.cat==='cafe')o.dish='';return o}
 let CUST=(store.get('cust1',[])||[]).map(cleanCust).filter(Boolean);
 CUST.forEach(c=>{P[c.id]=c});
-const DEFP={};Object.values(P).forEach(q=>{if(!q.custom)DEFP[q.id]={lat:q.lat,lng:q.lng,ap:q.ap}});
-function cleanOvr(o){const out={};if(!o||typeof o!=='object')return out;Object.keys(o).forEach(id=>{const q=P[id],v=o[id];if(!q||q.custom||!v)return;const r={};if(numIn(v.lat,-90,90)!=null&&numIn(v.lng,-180,180)!=null){r.lat=+v.lat;r.lng=+v.lng}const rt=numIn(v.rating,0.1,5);if(rt!=null)r.rating=rt;if(urlOk(v.menu))r.menu=String(v.menu).slice(0,500);if(urlOk(v.photo)||/^data:image\//.test(v.photo||''))r.photo=v.photo;if(Object.keys(r).length)out[id]=r});return out}
-function restoreP(q){const d=DEFP[q.id];if(!d)return;q.lat=d.lat;q.lng=d.lng;q.ap=d.ap;delete q.rating;delete q.menu;delete q.photo}
-function applyOvr(id){const q=P[id],v=OVR[id];if(!q||!v||q.custom)return;if(v.lat!=null){q.lat=v.lat;q.lng=v.lng;q.ap=0}if(v.rating)q.rating=v.rating;if(v.menu)q.menu=v.menu;if(v.photo)q.photo=v.photo}
+const DEFP={};Object.values(P).forEach(q=>{if(!q.custom)DEFP[q.id]={lat:q.lat,lng:q.lng,ap:q.ap,name:q.name,desc:q.desc}});
+let HID=new Set((store.get('phide1',[])||[]).filter(id=>typeof id==='string'));const saveHid=()=>store.set('phide1',[...HID]);
+function cleanOvr(o){const out={};if(!o||typeof o!=='object')return out;Object.keys(o).forEach(id=>{const q=P[id],v=o[id];if(!q||q.custom||!v)return;const r={};if(numIn(v.lat,-90,90)!=null&&numIn(v.lng,-180,180)!=null){r.lat=+v.lat;r.lng=+v.lng}const rt=numIn(v.rating,0.1,5);if(rt!=null)r.rating=rt;if(urlOk(v.menu))r.menu=String(v.menu).slice(0,500);if(urlOk(v.photo)||/^data:image\//.test(v.photo||''))r.photo=v.photo;if(typeof v.name==='string'&&v.name.trim())r.name=v.name.trim().slice(0,40);if(typeof v.desc==='string'&&v.desc.trim())r.desc=v.desc.trim().slice(0,200);if(Object.keys(r).length)out[id]=r});return out}
+function restoreP(q){const d=DEFP[q.id];if(!d)return;q.lat=d.lat;q.lng=d.lng;q.ap=d.ap;q.name=d.name;q.desc=d.desc;delete q.rating;delete q.menu;delete q.photo}
+function applyOvr(id){const q=P[id],v=OVR[id];if(!q||!v||q.custom)return;if(v.lat!=null){q.lat=v.lat;q.lng=v.lng;q.ap=0}if(v.rating)q.rating=v.rating;if(v.name)q.name=v.name;if(v.desc)q.desc=v.desc;if(v.menu)q.menu=v.menu;if(v.photo)q.photo=v.photo}
 let OVR=cleanOvr(store.get('ovr1',{}));Object.keys(OVR).forEach(applyOvr);
 const cleanTodo=t=>{const out={};if(!t||typeof t!=='object')return out;for(let i=0;i<DAYS.length;i++)if(Array.isArray(t[i]))out[i]=t[i].slice(0,20).map(x=>String(x).slice(0,60)).filter(x=>x.trim());return out};
 let TODO=cleanTodo(store.get('todo2',{}));
@@ -687,7 +713,7 @@ function readHero(file){const fr=new FileReader();fr.onload=()=>{const im=new Im
 {const raw=store.get(PKEY,null);let sv0=cleanPlan(raw);
  if(!sv0&&Array.isArray(raw)){/* 새 버전에서 일부 장소가 사라져도 나머지 수정 내용은 살린다 */
   sv0=DAYS.map((d,i)=>{const day=Array.isArray(raw[i])?raw[i]:null;if(!day)return d.items;const keep=[];for(const it of day){if(!it||typeof it.tm!=='string'||!Array.isArray(it.o))continue;const one=cleanItems([it]);if(one&&one.length){keep.push(one[0]);continue}
-    const os=it.o.map(x=>cleanItems([{tm:it.tm,o:[x]}])).filter(Boolean).map(r=>r[0].o[0]);if(os.length){const ni={tm:it.tm.slice(0,5),o:os};if(it.cost!=null&&isFinite(+it.cost))ni.cost=+it.cost;if(it.spent!=null&&isFinite(+it.spent))ni.spent=+it.spent;keep.push(ni)}}
+    const os=it.o.map(x=>cleanItems([{tm:it.tm,o:[x]}])).filter(Boolean).map(r=>r[0].o[0]);if(os.length){const ni={tm:it.tm.slice(0,5),o:os};if(it.cost!=null&&isFinite(+it.cost))ni.cost=+it.cost;if(it.spent!=null&&isFinite(+it.spent))ni.spent=+it.spent;if(it.memo)ni.memo=String(it.memo).slice(0,60);keep.push(ni)}}
     return keep});}
  if(sv0)applyPlan(sv0)}
 const toMin=t=>{const m=/^(\d{1,2}):(\d{2})$/.exec(t||'');return m?(+m[1])*60+(+m[2]):null};
@@ -702,17 +728,21 @@ const TRAY=[['sight','관광'],['food','맛집'],['cafe','카페'],['shop','쇼�
 const trayCat=q=>S.tray==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===S.tray;
 function fabUpdate(){const f=$('#fab');if(!f)return;const on=S.view==='plan'||S.view==='spots';f.hidden=!on;if(!on)return;const r=$('#mapcol').getBoundingClientRect(),inMap=r.top<innerHeight*0.55&&r.bottom>innerHeight*0.3;f.textContent=inMap?'📋 일정·목록 보기':'🗺 지도 보기';f.dataset.mode=inMap?'plan':'map'}
 window.addEventListener('scroll',fabUpdate,{passive:true});
+function trayEditForm(){if(!S.trayEdit)return'';let h='';const q=S.teId&&P[S.teId];
+ if(q)h+='<div class="tef"><b>'+esc(q.name)+' 수정</b><div class="edbar"><input type="text" id="ten" value="'+esc(q.name)+'" aria-label="이름" style="flex:1 1 160px" maxlength="40"></div><div class="edbar"><input type="text" id="ted" value="'+esc(q.desc||'')+'" aria-label="설명" placeholder="한 줄 설명" style="flex:1 1 200px" maxlength="200"><input type="number" id="ter" min="0" max="5" step="0.1" value="'+(q.rating||'')+'" placeholder="별점" style="width:84px" aria-label="별점"></div><div class="edbar"><button class="btn p" data-act="tsave" data-id="'+q.id+'">저장</button><button class="btn" data-act="tcancel">취소</button><button class="btn d" data-act="tdel" data-id="'+q.id+'">삭제</button></div><p class="hint" style="margin:0">위치(좌표)는 카드를 눌러 지도 아래 "위치·정보 수정"에서 고쳐요.</p></div>';
+ else h+='<p class="hint" style="margin:2px 4px 6px">✏로 이름·설명을 고치고 ✕로 후보에서 지워요. 일정에 이미 넣은 항목은 그대로 남아요.</p>';
+ if(HID.size)h+='<div class="edbar" style="margin:0 4px 6px"><button class="btn" data-act="trestore">지운 후보 '+HID.size+'개 모두 복원</button></div>';return h}
 function renderTray(){const w=$('#trayWrap');if(!w)return;w.hidden=S.view!=='plan';if(w.hidden)return;
  const old=w.querySelector('.tscroll'),sl=old?old.scrollLeft:0,lp=lodgeP();
  const used=new Set(DAYS[S.day].items.map(it=>it.o[0].id).filter(Boolean));
- const cnt=k=>Object.values(P).filter(q=>k==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===k).length;
- const L=Object.values(P).filter(trayCat).map(q=>({q,d:km(lp,q)})).sort((a,b)=>a.d-b.d);
- let h='<div class="tray"><div class="trh"><b>후보 담기</b><span>'+(S.trayOpen?'카드를 아래 일정으로 끌어다 놓거나 ＋를 눌러요 · 숙소에서 가까운 순':'접어 두었어요')+'</span><button class="btn" data-act="trayt" style="margin-left:auto" aria-expanded="'+S.trayOpen+'">'+(S.trayOpen?'접기 ▲':'펼치기 ▼')+'</button></div>';
+ const cnt=k=>Object.values(P).filter(q=>!HID.has(q.id)&&(k==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===k)).length;
+ const L=Object.values(P).filter(q=>!HID.has(q.id)&&trayCat(q)).map(q=>({q,d:km(lp,q)})).sort((a,b)=>a.d-b.d);
+ let h='<div class="tray"><div class="trh"><b>후보 담기</b><span>'+(S.trayOpen?'카드를 아래 일정으로 끌어다 놓거나 ＋를 눌러요 · 숙소에서 가까운 순':'접어 두었어요')+'</span>'+(S.trayOpen?'<button class="btn'+(S.trayEdit?' p':'')+'" data-act="tedit" style="margin-left:auto">'+(S.trayEdit?'✔ 완료':'✏ 편집')+'</button>':'')+'<button class="btn" data-act="trayt"'+(S.trayOpen?'':' style="margin-left:auto"')+' aria-expanded="'+S.trayOpen+'">'+(S.trayOpen?'접기 ▲':'펼치기 ▼')+'</button></div>';
  if(S.trayOpen){h+='<div class="ttabs" role="group" aria-label="후보 종류">';
   TRAY.forEach(t=>{h+='<button class="cf" data-act="ttab" data-k="'+t[0]+'" style="--c:'+CAT[t[0]][1]+'" aria-pressed="'+(S.tray===t[0])+'"><i></i>'+t[1]+' '+cnt(t[0])+'</button>'});
   h+='</div><div class="tscroll" id="tscroll">';
-  L.forEach(x=>{const q=x.q,u=used.has(q.id);h+='<div class="tc'+(u?' used':'')+'" data-act="tpick" data-id="'+q.id+'" data-pid="'+q.id+'" style="--c:'+colOf(q)+'">'+thumb(q,'tcimg')+'<button class="tcadd" data-act="addp" data-id="'+q.id+'" aria-label="'+esc(q.name)+' 일정에 추가">＋</button><b>'+esc(q.name.replace(/\s*\(.*\)/,''))+'</b><small>'+(q.rating?'<span class="star">★ '+q.rating+'</span> · ':'')+x.d.toFixed(1)+'km'+(u?' · 일정에 있음':'')+(q.ap?' · 위치 대략':'')+'</small></div>'});
-  h+='</div><details class="addp" id="addd"'+(S.addOpen?' open':'')+'><summary>＋ 내 장소 직접 추가 (이름·위치·색 지정)</summary><div class="edb">'+
+  L.forEach(x=>{const q=x.q,u=used.has(q.id);h+='<div class="tc'+(u?' used':'')+'" data-act="tpick" data-id="'+q.id+'" data-pid="'+q.id+'" style="--c:'+colOf(q)+'">'+thumb(q,'tcimg')+(S.trayEdit?'<button class="tcx e" data-act="tedt" data-id="'+q.id+'" aria-label="수정">✏</button><button class="tcx d" data-act="tdel" data-id="'+q.id+'" aria-label="삭제">✕</button>':'<button class="tcadd" data-act="addp" data-id="'+q.id+'" aria-label="'+esc(q.name)+' 일정에 추가">＋</button>')+'<b>'+esc(q.name.replace(/\s*\(.*\)/,''))+'</b><small>'+(q.rating?'<span class="star">★ '+q.rating+'</span> · ':'')+x.d.toFixed(1)+'km'+(u?' · 일정에 있음':'')+(q.ap?' · 위치 대략':'')+'</small></div>'});
+  h+='</div>'+trayEditForm()+'<details class="addp" id="addd"'+(S.addOpen?' open':'')+'><summary>＋ 내 장소 직접 추가 (이름·위치·색 지정)</summary><div class="edb">'+
    '<div class="edbar"><input type="text" id="ntitle" placeholder="장소 이름" style="flex:1 1 160px"><select id="ncat" style="width:auto">'+TRAY.map(t=>'<option value="'+t[0]+'"'+(S.tray===t[0]?' selected':'')+'>'+t[1]+'</option>').join('')+'</select><input type="color" id="ncolor" value="'+CAT[S.tray][1]+'" aria-label="핀 색" style="width:44px;height:36px;padding:2px"></div>'+
    '<div class="edbar"><input type="text" id="ncoord" data-coord="add" placeholder="좌표 예: 10.2172, 103.9572" style="flex:1 1 180px"><button class="btn" data-act="pick" data-k="add">지도에서 찍기</button></div>'+
    '<div class="edbar"><input type="text" id="nmemo" placeholder="메모 (선택)" style="flex:1 1 160px"><input type="number" id="nrate" min="0" max="5" step="0.1" placeholder="별점" style="width:84px"></div>'+
@@ -770,16 +800,17 @@ function onCancel(){endDrag();setTimeout(()=>{noClick=false},60)}
 document.addEventListener('pointerdown',e=>{if(e.button>0||drag)return;
  const g=e.target.closest('.gr[data-i]'),tc=e.target.closest('.tc[data-pid]');
  if(g){const i=+g.dataset.i,it=DAYS[S.day].items[i];if(!it)return;const x=it.o[0];drag={kind:'item',from:i,sx:e.clientX,sy:e.clientY,x:e.clientX,y:e.clientY,pt:e.pointerType,active:false,label:it.tm+' '+oTitle(x)}}
- else if(tc&&!e.target.closest('.tcadd')){const q=P[tc.dataset.pid];if(!q)return;drag={kind:'tray',pid:q.id,sx:e.clientX,sy:e.clientY,x:e.clientX,y:e.clientY,pt:e.pointerType,active:false,label:'＋ '+q.name.replace(/\s*\(.*\)/,'')}}
+ else if(tc&&!e.target.closest('.tcadd,.tcx')){const q=P[tc.dataset.pid];if(!q)return;drag={kind:'tray',pid:q.id,sx:e.clientX,sy:e.clientY,x:e.clientX,y:e.clientY,pt:e.pointerType,active:false,label:'＋ '+q.name.replace(/\s*\(.*\)/,'')}}
  else return;
  window.addEventListener('pointermove',onMove,{passive:false});window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onCancel)});
 document.addEventListener('dragstart',e=>{if(e.target.closest&&e.target.closest('.tc,.it'))e.preventDefault()});
 /* share link */
-function payload(){const h={};Object.keys(HERO).forEach(k=>{if(urlOk(HERO[k]))h[k]=HERO[k]});const nod=o=>{const r=Object.assign({},o);if(r.photo&&!urlOk(r.photo))delete r.photo;return r};const oo={};Object.keys(OVR).forEach(k=>{const v=nod(OVR[k]);if(Object.keys(v).length)oo[k]=v});return {v:2,p:DAYS.map(d=>d.items),c:CUST.map(nod),o:oo,t:TODO,h}}
+function payload(){const h={};Object.keys(HERO).forEach(k=>{if(urlOk(HERO[k]))h[k]=HERO[k]});const nod=o=>{const r=Object.assign({},o);if(r.photo&&!urlOk(r.photo))delete r.photo;return r};const oo={};Object.keys(OVR).forEach(k=>{const v=nod(OVR[k]);if(Object.keys(v).length)oo[k]=v});const DD=JSON.parse(DEF),dif=a=>a.map((it,i)=>JSON.stringify(it)===JSON.stringify(DD[i])?0:it);return {v:2,p:dif(DAYS.map(d=>d.items)),c:CUST.map(nod),o:oo,t:TODO,h,x:EXP,d:[...HID],r:RP?dif(RP):null,b:FX.budget||null,m:FX.manual||null}}
 function encodePlan(){const j=JSON.stringify(payload());try{if(window.LZString)return 'z'+LZString.compressToEncodedURIComponent(j)}catch(e){}return 'b'+btoa(unescape(encodeURIComponent(j))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function decodePlan(c){try{let j;if(c[0]==='z'&&window.LZString)j=LZString.decompressFromEncodedURIComponent(c.slice(1));else if(c[0]==='b'){let b=c.slice(1).replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';j=decodeURIComponent(escape(atob(b)))}else return null;
- const o=JSON.parse(j),pl=Array.isArray(o)?o:o.p,cu=Array.isArray(o.c)?o.c.map(cleanCust).filter(Boolean):[],ext=new Set(cu.map(x=>x.id)),plan=cleanPlan(pl,ext);if(!plan)return null;
- return {plan,cust:cu,ovr:cleanOvr(o.o),todo:cleanTodo(o.t),hero:cleanHero(o.h)}}catch(e){return null}}
+ const o=JSON.parse(j);let pl=Array.isArray(o)?o:o.p;const DD2=JSON.parse(DEF);if(Array.isArray(pl))pl=pl.map((d,i)=>d===0||d==null?DD2[i]:d);const ro=Array.isArray(o.r)?o.r.map((d,i)=>d===0||d==null?DD2[i]:d):null;if(!Array.isArray(o))o.r=ro;const cu=Array.isArray(o.c)?o.c.map(cleanCust).filter(Boolean):[],ext=new Set(cu.map(x=>x.id)),plan=cleanPlan(pl,ext);if(!plan)return null;
+ const ex=Array.isArray(o.x)?o.x.filter(x=>x&&Number.isInteger(x.d)&&x.d>=0&&x.d<5&&x.n&&x.v>=0).map(x=>({d:x.d,n:String(x.n).slice(0,40),v:+x.v,c:CAT[x.c]?x.c:'food'})):[];
+ return {plan,cust:cu,ovr:cleanOvr(o.o),todo:cleanTodo(o.t),hero:cleanHero(o.h),hid:Array.isArray(o.d)?o.d.filter(x=>typeof x==='string'&&P[x]):[],exp:ex,rp:o.r?cleanPlan(o.r,ext):null,bud:numIn(o.b,0,1e10),man:numIn(o.m,0,1e6)}}catch(e){return null}}
 let pendingShare=null;
 function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(t).then(()=>true,()=>false)}return Promise.resolve(false)}
 /* ---------- day selector, weather, budget ---------- */
@@ -886,6 +917,18 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='fxauto'){delete FX.manual;store.set('fx1',FX);updBud();toast('자동 환율로 되돌렸어요')}
  else if(a==='delphoto'){const q=P[b.dataset.id];if(q)setPhoto(q,null)}
  else if(a==='tpick'){if(noClick)return;const q=P[b.dataset.id];if(!q)return;S.pick=q.id;if(S.scope==='route'&&!routePts().some(z=>z.pl.id===q.id))S.scope='all';renderCard();drawMap(false);flyTo(q,15);let oo=false;try{oo=!!map&&!S.autoZoom&&!map.getBounds().contains([q.lat,q.lng])}catch(e){}const nm0=q.name.replace(/\s*\(.*\)/,'');toast(oo?nm0+' · 지금 지도 화면 밖이에요. 지도를 직접 움직여 보세요':'지도에 표시했어요: '+nm0)}
+ else if(a==='tedit'){S.trayEdit=!S.trayEdit;S.teId=null;renderTray()}
+ else if(a==='tedt'){S.teId=b.dataset.id;renderTray()}
+ else if(a==='tcancel'){S.teId=null;renderTray()}
+ else if(a==='trestore'){HID.clear();saveHid();renderTray();drawMap(false);toast('지운 후보를 복원했어요')}
+ else if(a==='tsave'){const q=P[b.dataset.id];if(!q)return;const nm=($('#ten').value||'').trim().slice(0,40),ds=($('#ted').value||'').trim().slice(0,200),rt=numIn($('#ter').value,0.1,5);if(!nm){toast('이름을 입력해 주세요');return}
+  q.name=nm;q.desc=ds||q.desc;if(rt!=null)q.rating=rt;else delete q.rating;
+  if(q.custom)store.set('cust1',CUST);else{const v=OVR[q.id]=OVR[q.id]||{};v.name=nm;if(ds)v.desc=ds;if(rt!=null)v.rating=rt;else delete v.rating;store.set('ovr1',OVR)}
+  S.teId=null;renderTray();renderCard();drawMap(false);render();toast('저장했어요')}
+ else if(a==='tdel'){const q=P[b.dataset.id];if(!q)return;
+  if(q.custom){CUST=CUST.filter(c=>c.id!==q.id);store.set('cust1',CUST);DAYS.forEach(d=>{d.items.forEach(it=>{it.o=it.o.filter(x=>x.id!==q.id)});d.items=d.items.filter(it=>it.o.length)});savePlan();delete P[q.id];if(S.pick===q.id)S.pick=null}
+  else{HID.add(q.id);saveHid()}
+  S.teId=null;S.open={};render();toast('후보에서 지웠어요'+(q.custom?'':' · 편집 모드에서 복원할 수 있어요'))}
  else if(a==='ttab'){S.tray=k;renderTray()}
  else if(a==='toptab'){S.topTab=k;renderTop()}
  else if(a==='toppick'){if(e.target.closest('a,button,input'))return;const x=TOPD[S.topTab].concat(TOPU.filter(u=>u[4]===S.topTab)).find(z=>z[0]===b.dataset.n);const q=x&&topPl(x,S.topTab);if(!q)return;topSticky=q.id;hoverPlace(q);flyTo(q,16);let oo=false;try{oo=!!map&&!S.autoZoom&&!map.getBounds().contains([q.lat,q.lng])}catch(er){}toast(oo?q.name+' · 지금 지도 화면 밖이에요. 지도를 직접 움직여 보세요':'지도에 표시했어요: '+q.name);renderTop()}
@@ -913,12 +956,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='addp'){e.stopPropagation();const q=P[b.dataset.id];if(!q)return;insertItem(S.day,q.id,DAYS[S.day].items.length);savePlan();S.open={};render();toast('맨 아래에 추가했어요 · ⠿ 손잡이로 위치를 옮기세요')}
  else if(a==='mv'){const ds=k.split('_'),di=+ds[0],ix=+ds[1],dir=+b.dataset.dir;if(moveItem(di,ix,dir<0?ix-1:ix+2)){savePlan();S.open={};S.open[di+'_'+(ix+dir)]=true;render()}}
  else if(a==='del'){const ds=k.split('_');DAYS[+ds[0]].items.splice(+ds[1],1);savePlan();S.open={};render();toast('삭제했어요 · 아래 "이 날 기본 일정으로"로 되돌릴 수 있어요')}
+ else if(a==='codecopy'){const c=encodePlan();copyText(c).then(ok=>{if(ok)toast('코드를 복사했어요 ('+c.length+'자). 카톡 나와의 채팅에 붙여넣으세요');else window.prompt('아래 코드를 전체 복사하세요',c)})}
+ else if(a==='codeapply'){let v=($('#codein').value||'').trim();const m=v.match(/#p=(\S+)/);if(m)v=m[1];v=v.replace(/\s+/g,'');const pp=v?decodePlan(v):null;if(!pp){toast('코드를 읽지 못했어요. 끝까지 전부 복사했는지 확인해 주세요');return}pendingShare=pp;const t=document.createElement('button');t.dataset.act='applyshare';document.body.appendChild(t);t.click();t.remove()}
  else if(a==='saverp'){const snap=DAYS.map(d=>d.items.map(it=>{const c=JSON.parse(JSON.stringify(it));delete c.spent;return c}));RP=cleanPlan(snap);if(!RP){toast('저장하지 못했어요');return}store.set('rp1',RP);render();toast('📍 지금 일정을 리셋 지점으로 저장했어요')}
  else if(a==='clearrp'){RP=null;try{localStorage.removeItem('pq_rp1')}catch(e){}render();toast('리셋 지점을 해제했어요. 이제 처음 기본값으로 리셋돼요')}
  else if(a==='resetday'){if(!S.zd){S.zd=1;render();setTimeout(()=>{S.zd=0},4000);return}S.zd=0;const def=JSON.parse(baseJson());DAYS[S.day].items=def[S.day];savePlan();S.open={};render();toast(RP?'이 날 일정을 내 리셋 지점으로 되돌렸어요':'이 날 일정을 기본으로 되돌렸어요')}
  else if(a==='resetall'){if(!S.zero){S.zero=1;render();setTimeout(()=>{S.zero=0},4000);return}S.zero=0;applyPlan(JSON.parse(baseJson()));savePlan();S.open={};render();toast(RP?'전체 일정을 내 리셋 지점으로 되돌렸어요':'전체 일정을 기본으로 되돌렸어요')}
- else if(a==='share'){const u=location.origin+location.pathname+'#p='+encodePlan();copyText(u).then(ok=>{if(ok)toast('공유 링크를 복사했어요. 메신저에 붙여넣으세요');else{window.prompt('아래 링크를 복사하세요',u)}})}
- else if(a==='applyshare'){if(pendingShare){const ps=pendingShare;CUST.forEach(c=>{delete P[c.id]});CUST=ps.cust;CUST.forEach(c=>{P[c.id]=c});store.set('cust1',CUST);Object.values(P).forEach(restoreP);OVR=ps.ovr;Object.keys(OVR).forEach(applyOvr);store.set('ovr1',OVR);TODO=ps.todo;store.set('todo2',TODO);HERO=ps.hero;store.set('hero1',HERO);applyPlan(ps.plan);savePlan();pendingShare=null}$('#shareBan').hidden=true;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}S.open={};render();toast('공유받은 일정을 적용했어요')}
+ else if(a==='share'){const u=location.origin+location.pathname+'#p='+encodePlan();copyText(u).then(ok=>{if(ok)toast('공유 링크를 복사했어요. 카톡 "나와의 채팅"에 붙여넣고 폰에서 여세요');else{window.prompt('아래 링크를 복사하세요',u)}})}
+ else if(a==='applyshare'){if(pendingShare){const ps=pendingShare;CUST.forEach(c=>{delete P[c.id]});CUST=ps.cust;CUST.forEach(c=>{P[c.id]=c});store.set('cust1',CUST);Object.values(P).forEach(restoreP);OVR=ps.ovr;Object.keys(OVR).forEach(applyOvr);store.set('ovr1',OVR);TODO=ps.todo;store.set('todo2',TODO);HERO=ps.hero;store.set('hero1',HERO);applyPlan(ps.plan);savePlan();EXP=ps.exp||[];saveExp();HID=new Set(ps.hid||[]);saveHid();RP=ps.rp||null;if(RP)store.set('rp1',RP);else{try{localStorage.removeItem('pq_rp1')}catch(e){}}if(ps.bud)FX.budget=ps.bud;if(ps.man)FX.manual=ps.man;store.set('fx1',FX);pendingShare=null}$('#shareBan').hidden=true;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}S.open={};render();toast('공유받은 일정을 적용했어요')}
  else if(a==='closeshare'){pendingShare=null;$('#shareBan').hidden=true;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
  else if(a==='scope'){S.scope=k;S.pick=null;renderCard();drawMap(true)}
  else if(a==='pv'){S.focus=Math.max(0,S.focus-1);S.pick=null;renderCard();drawMap(false);const q=cardPick();if(q)flyTo(q,14)}
@@ -936,7 +981,7 @@ document.addEventListener('change',e=>{const d=e.target.dataset;if(!d)return;if(
   if(d.act==='etitle'){if(v)x.t=v.slice(0,80);else if(x.id)delete x.t}
   else if(d.act==='ecat'){if(CAT[e.target.value]){x.c=e.target.value;const tcx=x.c==='cloth'?'shop':x.c;if(TRAY.some(t=>t[0]===tcx))S.tray=tcx}}
   else{if(v)x.why=v.slice(0,200);else delete x.why}
-  savePlan();render()}}else if(d.act==='spent'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e10);if(it){if(v==null||e.target.value==='')delete it.spent;else it.spent=v;savePlan();render()}}else if(d.act==='exps'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e10);if(it){if(v==null||e.target.value==='')delete it.spent;else it.spent=v;savePlan();render()}}else if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
+  savePlan();render()}}else if(d.act==='memo'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it){const v=e.target.value.trim().slice(0,60);if(v)it.memo=v;else delete it.memo;savePlan()}}else if(d.act==='spent'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e10);if(it){if(v==null||e.target.value==='')delete it.spent;else it.spent=v;savePlan();render()}}else if(d.act==='exps'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e10);if(it){if(v==null||e.target.value==='')delete it.spent;else it.spent=v;savePlan();render()}}else if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
 document.addEventListener('input',e=>{const id=e.target.id,v=parseFloat(e.target.value);if(id==='memo')store.set('memo',e.target.value);
  else if(id==='fxrate'){FX.manual=v>0?v:undefined;store.set('fx1',FX);updBud()}
  else if(id==='bkrw'){$('#bvnd').value=v>0?Math.round(v*rate()):''}
@@ -956,7 +1001,7 @@ document.addEventListener('mousemove',e=>{if(drag&&drag.active){hideTip();return
  const di=DATES.indexOf(dp);if(di>-1)S.day=di;else{const iso=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');const j=DATES.indexOf(iso);S.day=j>-1?j:0}
  if(vw&&VIEWS.some(v=>v[0]===vw))S.view=vw;
  $('#fb').hidden=true;
- const hm=/^#p=(.+)$/.exec(location.hash||'');if(hm){const pp=decodePlan(hm[1]);if(pp){pendingShare=pp;$('#shareBan').hidden=false}}
+ const hm=/^#p=(.+)$/.exec(location.hash||'');if(hm){const pp=decodePlan(hm[1]);if(pp){pendingShare=pp;$('#shareBan').hidden=false}else setTimeout(()=>toast('공유 링크가 잘렸거나 읽을 수 없어요. 일정 화면 아래 "코드로 옮기기"를 써 보세요'),600)}
  initMap();render();loadWx();loadFx();
 })();
 })();
