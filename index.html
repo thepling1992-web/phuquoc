@@ -237,7 +237,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .tag.s{background:#fde8e8;color:#b42318}
 .spcat{margin-top:8px;display:grid;gap:5px}.spc{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;font-size:12px}.spc i,.spn i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.spb{height:8px;background:#eef2f4;border-radius:6px;overflow:hidden}.spb u{display:block;height:100%;border-radius:6px}
 .spday{margin-top:10px}.sprows{margin-top:6px}.spr{display:grid;grid-template-columns:44px 1fr 120px;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--ln);font-size:13px}.spr.ex{grid-template-columns:44px 1fr auto 28px}.spt{color:var(--amb);font-weight:700;font-size:12px}.spn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.spr input{width:100%;padding:5px 8px;font-size:13px}.spv{font-size:12.5px}
-.rmemo{display:block;width:calc(100% - 42px);margin:3px 0 1px 40px;padding:3px 8px;font-size:12px;border:1px dashed var(--ln);border-radius:8px;background:#fcfdfd;color:#475569}.rmemo:focus{border-style:solid;background:#fff}.rmemo::placeholder{color:#b6c0c8}
+input.rmemo[type=text]{display:block;box-sizing:border-box;width:calc(100% - 40px);max-width:100%;margin:3px 0 1px 40px;padding:3px 8px;font-size:12px;border:1px dashed var(--ln);border-radius:8px;background:#fcfdfd;color:#475569}.rmemo:focus{border-style:solid;background:#fff}.rmemo::placeholder{color:#b6c0c8}
 .tcx{position:absolute;top:6px;width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--ln);font-size:12px;display:grid;place-items:center;z-index:3;box-shadow:0 1px 4px rgba(0,0,0,.25)}.tcx.e{right:34px}.tcx.d{right:6px;color:#b42318}
 .tef{margin:2px 4px 8px;padding:8px;border:1px solid var(--ln);border-radius:12px;background:#f8fbfc}
 </style></head>
@@ -272,7 +272,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
     <section id="extra" hidden></section>
   </div>
 </main>
-<footer><span style="display:block;font-size:10.5px;color:#94a3b8">버전 2026-11-01-r13</span>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
+<footer><span style="display:block;font-size:10.5px;color:#94a3b8">버전 2026-11-01-r14</span>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
 </div>
 <button class="fab" id="fab" data-act="fab" hidden>🗺 지도 보기</button><div id="tip" hidden></div><div id="big" hidden></div><div id="toast" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -715,6 +715,9 @@ function readHero(file){const fr=new FileReader();fr.onload=()=>{const im=new Im
   sv0=DAYS.map((d,i)=>{const day=Array.isArray(raw[i])?raw[i]:null;if(!day)return d.items;const keep=[];for(const it of day){if(!it||typeof it.tm!=='string'||!Array.isArray(it.o))continue;const one=cleanItems([it]);if(one&&one.length){keep.push(one[0]);continue}
     const os=it.o.map(x=>cleanItems([{tm:it.tm,o:[x]}])).filter(Boolean).map(r=>r[0].o[0]);if(os.length){const ni={tm:it.tm.slice(0,5),o:os};if(it.cost!=null&&isFinite(+it.cost))ni.cost=+it.cost;if(it.spent!=null&&isFinite(+it.spent))ni.spent=+it.spent;if(it.memo)ni.memo=String(it.memo).slice(0,60);keep.push(ni)}}
     return keep});}
+/* 이전 버전의 '손대지 않은' 기본 일정이 저장돼 있으면 새 기본 일정으로 자동 교체 */
+ const OLDSIG=["06:00|airport|푸꾸옥 도착 · 입국 수속|2;07:30|salinda|살린다 도착 · 짐 맡기고 조식|2;09:30|salinda|수영장·해변 가볍게 쉬기|3;12:00|bunken||4;14:00|salinda|체크인 · 객실 낮잠|2;16:30|kingkong|킹콩마트 본점 쇼핑|3;18:30|buncha||4;20:00|salinda|숙소 복귀 · 일찍 휴식|1", "08:30|salinda|호텔 조식 후 출발|1;09:00|safari|빈펄 사파리|3;12:30|botor||5;14:00|grandworld|그랜드월드 산책|4;15:30|salinda|숙소 복귀·낮잠|2;18:30|bunken||4", "08:00|salinda|조식 · 마지막 해변 산책|2;11:00|salinda|살린다 체크아웃 (12:00 전)|2;12:00|kienxay||4;14:00|cua|Cua Cafe 쉬어가기|3;15:30|sonasea|소나시 체크인 · 수영장|2;17:30|nightmkt|즈엉동 야시장 구경|4;19:00|rakhoi||4;20:30|sonasea|소나시 복귀|1", "08:30|sonasea|호텔 조식 · 롱비치 산책|2;10:30|sonasea|수영장·선베드 휴식|2;12:30|meo||3;14:30||객실 휴식·낮잠|3;16:30|sunset|선셋타운·키스브릿지 일몰 (A안)|4;18:30|thskitchen||4;20:00|sonasea|소나시 복귀|1", "08:00|sonasea|조식 · 수영장 마지막 시간|1;11:00|sonasea|체크아웃 (12:00 전) · 짐 보관|1;12:00|bepan||3;14:00|kingkong|킹콩마트 마지막 쇼핑|4;16:00|cua||3;17:45|airport|공항 도착 · 탑승 수속|2;20:45|airport|푸꾸옥 출발 → 한국 04:00 도착|1"];
+ if(sv0){const sg=a=>a.map(it=>it.tm+'|'+(it.o[0].id||'')+'|'+(it.o[0].t||'')+'|'+it.o.length).join(';'),nd=JSON.parse(DEF);let ch=false;sv0=sv0.map((day,i)=>{if(sg(day)===OLDSIG[i]){ch=true;return nd[i]}return day});if(ch)store.set(PKEY,sv0)}
  if(sv0)applyPlan(sv0)}
 const toMin=t=>{const m=/^(\d{1,2}):(\d{2})$/.exec(t||'');return m?(+m[1])*60+(+m[2]):null};
 const fmtT=n=>{n=Math.max(0,Math.min(1435,n));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')};
