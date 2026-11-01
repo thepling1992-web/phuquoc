@@ -679,18 +679,19 @@ function renderTray(){const w=$('#trayWrap');if(!w)return;w.hidden=S.view!=='pla
  w.innerHTML=h+'</div>';const n=w.querySelector('.tscroll');if(n)n.scrollLeft=sl}
 
 /* 구글 4.5★ 이상 · 리뷰 1,000건 이상 (Wanderlog가 보여 주는 구글 평점 기준, 2026-11-01 확인 · 수치는 수시로 변동) */
-const TOPD={coffee:[['ANBA COFFEE',4.6,1361,'커피'],['Istanbul Bai Kem',4.8,3902,'카페·디저트 (Wanderlog 카페 목록)'],['OCSEN Beach Bar & Club',4.5,4708,'비치바·카페']],
+const TOPD={coffee:[['Istanbul Bai Kem',4.8,3902,'카페·디저트'],['OCSEN Beach Bar & Club',4.5,4700,'비치바·카페'],['ANBA COFFEE',4.6,1361,'커피'],['Bittersweet - Cocktail & Chocolate',4.8,1246,'칵테일·초콜릿 (살린다 리조트 안)'],['Nora\'s Cafe - Restaurant',4.7,1147,'카페·식당']],
 shop:[['LOCA - Night Market',4.9,1067,'야시장·쇼핑']],
-food:[['Mai Hương Restaurant (Grand World)',4.8,3530,'베트남 요리'],['Nhà hàng Vua Hải Sản',4.8,2087,'해산물'],['Ricordo Restaurant',4.6,3035,'이탈리안'],['Saigonese Eatery',4.6,2104,'베트남 요리'],['Phuong Hoang Seafood Restaurant',4.5,1891,'해산물'],['Đảo Hải Sản (Seafood Restaurant)',4.7,1383,'해산물'],['Rory\'s Beach Bar',4.8,1315,'비치 레스토랑·바'],['Yushima Japanese Restaurant',4.5,1000,'일식 (딱 1,000건 · 경계)']]};
+food:[['The Home Pizza Phu Quoc',4.8,7503,'피자'],['Sailing Club Phu Quoc',4.5,3770,'비치클럽·식당'],['Mai Hương Restaurant (Grand World)',4.8,3530,'베트남 요리'],['Ricordo Restaurant',4.6,3035,'이탈리안'],['Saigonese Eatery',4.6,2148,'베트남 요리'],['Nhà hàng Vua Hải Sản',4.8,2087,'해산물'],['Phuong Hoang Seafood Restaurant',4.5,1887,'해산물'],['Mai Jo Restaurant',4.7,1792,'임시휴업 표기 · 방문 전 확인'],['Đảo Hải Sản (Seafood Restaurant)',4.7,1383,'해산물'],['Rory\'s Beach Bar',4.8,1321,'비치 레스토랑·바 · 임시휴업 표기'],['Yushima Japanese Restaurant',4.5,1000,'일식 · 딱 1,000건(경계)']]};
+let TOPU=[];try{TOPU=JSON.parse(localStorage.getItem('pq_topcust1')||'[]')}catch(e){}
 const TOPT=[['coffee','커피'],['shop','쇼핑'],['food','식당']];
 S.topTab='coffee';S.topOpen=store.get('topopen',true)!==false;
 function renderTop(){const w=$('#topWrap');if(!w)return;w.hidden=S.view!=='plan';if(w.hidden)return;
  let h='<div class="tray"><div class="trh"><b>구글 4.5★ · 리뷰 1,000건+</b><span>'+(S.topOpen?'구글 평점 4.5 이상 · 리뷰 1,000건 이상만 모았어요':'접어 두었어요')+'</span><button class="btn" data-act="topt" style="margin-left:auto" aria-expanded="'+S.topOpen+'">'+(S.topOpen?'접기 ▲':'펼치기 ▼')+'</button></div>';
  if(S.topOpen){h+='<div class="ttabs" role="group" aria-label="종류">';
-  TOPT.forEach(t=>{h+='<button class="cf" data-act="toptab" data-k="'+t[0]+'" aria-pressed="'+(S.topTab===t[0])+'">'+t[1]+' '+TOPD[t[0]].length+'</button>'});
+  TOPT.forEach(t=>{h+='<button class="cf" data-act="toptab" data-k="'+t[0]+'" aria-pressed="'+(S.topTab===t[0])+'">'+t[1]+' '+(TOPD[t[0]].length+TOPU.filter(u=>u[4]===t[0]).length)+'</button>'});
   h+='</div><div class="tscroll">';
-  TOPD[S.topTab].slice().sort((a,b)=>b[2]-a[2]).forEach(x=>{h+='<div class="tpc"><b>'+esc(x[0])+'</b><span class="rt">★ '+x[1].toFixed(1)+'</span> · 리뷰 '+x[2].toLocaleString()+'건<small>'+esc(x[3])+'</small><a href="https://www.google.com/maps/search/'+encodeURIComponent(x[0]+' Phu Quoc')+'" target="_blank" rel="noopener">구글맵에서 열기 ↗</a></div>'});
-  h+='</div><p class="hint" style="margin:2px 4px 0">출처: Wanderlog(구글 평점 반영) 2026-11-01 확인. 구글 수치는 계속 바뀌니 가기 전 구글맵에서 다시 확인하세요. 쇼핑은 조건에 맞는 곳이 적어요.</p>'}
+  TOPD[S.topTab].concat(TOPU.filter(u=>u[4]===S.topTab)).sort((a,b)=>b[2]-a[2]).forEach(x=>{h+='<div class="tpc"><b>'+esc(x[0])+(x[4]?' <em style="font-size:10px;color:var(--ac)">내가 추가</em>':'')+'</b><span class="rt">★ '+x[1].toFixed(1)+'</span> · 리뷰 '+x[2].toLocaleString()+'건<small>'+esc(x[3])+'</small><a href="https://www.google.com/maps/search/'+encodeURIComponent(x[0]+' Phu Quoc')+'" target="_blank" rel="noopener">구글맵에서 열기 ↗</a>'+(x[4]?' <button class="btn" data-act="topdel" data-k="'+esc(x[0])+'" style="padding:2px 8px;font-size:11px">삭제</button>':'')+'</div>'});
+  h+='</div><details class="addp" id="topadd"><summary>＋ 내가 찾은 곳 추가 (구글맵에서 확인한 별점·리뷰 수)</summary><div class="edb"><div class="edbar"><input type="text" id="tpn" placeholder="장소 이름" style="flex:1 1 160px"><input type="number" id="tpr" min="0" max="5" step="0.1" placeholder="별점" style="width:80px"><input type="number" id="tpc" min="0" placeholder="리뷰 수" style="width:96px"></div><div class="edbar"><input type="text" id="tpm" placeholder="메모 (선택)" style="flex:1 1 160px"><button class="btn p" data-act="topadd">현재 탭에 추가</button></div></div></details><p class="hint" style="margin:2px 4px 0">출처: Wanderlog 목록 12개(식당·카페·바·해산물·아침·베이커리·쇼핑 등, 구글 평점 반영) 2026-11-01 확인. Wanderlog에 없는 곳은 빠졌을 수 있어요. 구글 수치는 계속 바뀌니 가기 전 구글맵에서 다시 확인하세요.</p>'}
  w.innerHTML=h+'</div>'}
 function placeTray(){const mc=$('#mapcol'),g=$('#grid'),t=$('#trayWrap'),u=$('#topWrap');if(!mc||!g||!t||!u)return;
  if(innerWidth>=900&&!g.classList.contains('one')){const c=$('#pcard');if(t.parentNode!==mc){mc.appendChild(t);mc.appendChild(u)}}
@@ -836,6 +837,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='tpick'){if(noClick)return;const q=P[b.dataset.id];if(!q)return;S.pick=q.id;if(S.scope==='route'&&!routePts().some(z=>z.pl.id===q.id))S.scope='all';renderCard();drawMap(false);flyTo(q,15);let oo=false;try{oo=!!map&&!S.autoZoom&&!map.getBounds().contains([q.lat,q.lng])}catch(e){}const nm0=q.name.replace(/\s*\(.*\)/,'');toast(oo?nm0+' · 지금 지도 화면 밖이에요. 지도를 직접 움직여 보세요':'지도에 표시했어요: '+nm0)}
  else if(a==='ttab'){S.tray=k;renderTray()}
  else if(a==='toptab'){S.topTab=k;renderTop()}
+ else if(a==='topadd'){const n=($('#tpn').value||'').trim(),r=parseFloat($('#tpr').value),c=parseInt($('#tpc').value,10);if(!n||!(r>=0)||!(c>=0)){toast('이름·별점·리뷰 수를 입력해 주세요');return}if(r<4.5||c<1000){toast('4.5★ 이상, 1,000건 이상만 담을 수 있어요');return}TOPU.push([n,r,c,($('#tpm').value||'').trim(),S.topTab]);try{localStorage.setItem('pq_topcust1',JSON.stringify(TOPU))}catch(e){}renderTop();toast('추가했어요')}
+ else if(a==='topdel'){TOPU=TOPU.filter(u=>!(u[0]===k&&u[4]===S.topTab));try{localStorage.setItem('pq_topcust1',JSON.stringify(TOPU))}catch(e){}renderTop()}
  else if(a==='topt'){S.topOpen=!S.topOpen;store.set('topopen',S.topOpen);renderTop()}
  else if(a==='trayt'){S.trayOpen=!S.trayOpen;store.set('trayopen',S.trayOpen);renderTray()}
  else if(a==='pick'){if(!map){toast('지도를 불러오지 못해 직접 좌표를 입력해 주세요');return}S.picking=k;$('#map').style.cursor='crosshair';toast('지도에서 위치를 눌러 주세요');if(innerWidth<900)$('#mapcol').scrollIntoView({behavior:'smooth',block:'start'})}
