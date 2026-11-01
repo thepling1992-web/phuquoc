@@ -45,7 +45,7 @@ a{color:var(--acd)}
 .ht p{margin:0;font-size:13.5px;opacity:.95}
 .cr{font-size:11px;color:var(--mut);margin:5px 4px 0}
 .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:14px;align-items:start}
-@media(min-width:900px){.grid{grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:22px}.grid.one{grid-template-columns:minmax(0,760px);justify-content:center}#mapcol{position:sticky;top:12px}}
+@media(min-width:900px){.grid{grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:22px}.grid.one{grid-template-columns:minmax(0,760px);justify-content:center}#mapcol{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto}}
 .card{background:var(--card);border:1px solid var(--ln);border-radius:var(--r,22px);padding:14px 16px}
 #mapcol{background:var(--card);border:1px solid var(--ln);border-radius:22px;overflow:hidden}
 .mw{position:relative}
@@ -199,8 +199,9 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .costline{margin-top:8px;font-size:12.5px;background:#f5f9f0;border:1px solid #cfe5bb;border-radius:12px;padding:6px 10px}
 .tag.c{background:#fff3d6;color:#92400e}
 .bt{margin:6px 0;font-size:12.5px}.bt th{background:#f1f5f9}.bmsg{margin:6px 0 0;font-size:13px}.ok{color:#0b6f63}.bad{color:#b91c1c}
-#trayWrap{grid-column:1/-1;order:-1;min-width:0}
-@media(max-width:899px){#trayWrap{grid-column:auto;order:2}#side{order:1}#mapcol{order:3}#extra{order:4}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
+#grid>#trayWrap,#grid>#topWrap{grid-column:1/-1;order:-1;min-width:0}#topWrap{min-width:0}#trayWrap .tray,#topWrap .tray{margin:0;border-radius:0;border-width:1px 0 0}#topWrap .tray{background:#fffdf5}
+.tpc{flex:0 0 190px;background:#fff;border:1px solid var(--ln);border-radius:16px;padding:10px;font-size:12px;scroll-snap-align:start}.tpc b{display:block;font-size:13px;margin-bottom:2px}.tpc .rt{color:#b45309;font-weight:800}.tpc small{display:block;color:var(--mut);font-size:11px;margin-top:2px}.tpc a{display:inline-block;margin-top:6px;font-size:11.5px;font-weight:700;color:var(--ac);text-decoration:none}.tpe{padding:10px 6px;color:var(--mut);font-size:12.5px}
+@media(max-width:899px){#grid>#trayWrap,#grid>#topWrap{grid-column:auto;order:2}#trayWrap .tray,#topWrap .tray{border-radius:22px;border-width:1px;margin-top:12px}#side{order:1}#mapcol{order:3}#extra{order:4}#map{height:clamp(240px,42vh,380px)}.th{width:68px;height:68px}.ix b{font-size:15px}.edbar input[type=text].wide{flex:1 1 100%}}
 @media(hover:none){#mhint{display:none}.trh span{display:none}}
 .fab{position:fixed;right:14px;bottom:18px;z-index:70;background:var(--navy);color:#fff;border-radius:99px;padding:10px 16px;font-weight:800;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.3);display:none}
 @media(max-width:899px){.fab{display:block}.fab[hidden]{display:none!important}#toast{bottom:76px}}
@@ -211,8 +212,8 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 #extra{min-width:0}
 .fhead{display:flex;align-items:center;gap:8px;margin-top:10px}.fhead b{font-size:13.5px}
 .fold{margin-left:auto;background:#eef2f5;border-radius:99px;padding:3px 11px;font-size:12px;font-weight:700;color:#334155;white-space:nowrap}
-#mapcol.folded>*:not(.mfh){display:none}
-@media(min-width:900px){.grid:not(.one) #mapcol{grid-column:1;grid-row:2/span 2}.grid:not(.one) #side{grid-column:2;grid-row:2}.grid:not(.one) #extra{grid-column:2;grid-row:3}}
+#mapcol.folded>*:not(.mfh):not(#trayWrap):not(#topWrap){display:none}
+@media(min-width:900px){.grid:not(.one) #mapcol{grid-column:1;grid-row:1/span 2}.grid:not(.one) #side{grid-column:2;grid-row:1}.grid:not(.one) #extra{grid-column:2;grid-row:2}}
 .ebtn{margin-left:auto}.ebtn+.fold{margin-left:0}.ebtn.on{background:var(--ac);color:#fff}
 .mdays{display:flex;gap:5px;flex-wrap:wrap;margin:8px 12px 0}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -233,6 +234,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
   <div id="heroSec" hidden></div>
   <div class="grid" id="grid">
     <div id="trayWrap" hidden></div>
+    <div id="topWrap" hidden></div>
     <section id="mapcol" aria-label="지도">
       <div class="fhead mfh" style="padding:8px 12px;margin:0"><b>🗺 지도 · 오늘의 동선</b><button class="fold" id="mfold" data-act="fold" data-k="map">접기 ▲</button></div>
       <div class="mw"><div id="map" role="application" aria-label="푸꾸옥 지도"></div>
@@ -675,6 +677,25 @@ function renderTray(){const w=$('#trayWrap');if(!w)return;w.hidden=S.view!=='pla
    '<div class="edbar"><input type="text" id="nmenu" placeholder="메뉴·정보 링크 (선택, https://...)" style="flex:1 1 200px"><button class="btn p" data-act="addc">후보에 추가</button></div>'+
    '<p class="hint" style="margin:2px 0 0">구글 지도에서 장소를 길게 누르면 나오는 좌표를 복사해 붙여넣거나, "지도에서 찍기"를 누르고 지도를 눌러 주세요.</p></div></details>'}
  w.innerHTML=h+'</div>';const n=w.querySelector('.tscroll');if(n)n.scrollLeft=sl}
+
+/* 구글 4.5★ 이상 · 리뷰 1,000건 이상 (Wanderlog가 보여 주는 구글 평점 기준, 2026-11-01 확인 · 수치는 수시로 변동) */
+const TOPD={coffee:[['ANBA COFFEE',4.6,1361,'커피'],['Istanbul Bai Kem',4.8,3902,'카페·디저트 (Wanderlog 카페 목록)'],['OCSEN Beach Bar & Club',4.5,4708,'비치바·카페']],
+shop:[['LOCA - Night Market',4.9,1067,'야시장·쇼핑']],
+food:[['Mai Hương Restaurant (Grand World)',4.8,3530,'베트남 요리'],['Nhà hàng Vua Hải Sản',4.8,2087,'해산물'],['Ricordo Restaurant',4.6,3035,'이탈리안'],['Saigonese Eatery',4.6,2104,'베트남 요리'],['Phuong Hoang Seafood Restaurant',4.5,1891,'해산물'],['Đảo Hải Sản (Seafood Restaurant)',4.7,1383,'해산물'],['Rory\'s Beach Bar',4.8,1315,'비치 레스토랑·바'],['Yushima Japanese Restaurant',4.5,1000,'일식 (딱 1,000건 · 경계)']]};
+const TOPT=[['coffee','커피'],['shop','쇼핑'],['food','식당']];
+S.topTab='coffee';S.topOpen=store.get('topopen',true)!==false;
+function renderTop(){const w=$('#topWrap');if(!w)return;w.hidden=S.view!=='plan';if(w.hidden)return;
+ let h='<div class="tray"><div class="trh"><b>구글 4.5★ · 리뷰 1,000건+</b><span>'+(S.topOpen?'구글 평점 4.5 이상 · 리뷰 1,000건 이상만 모았어요':'접어 두었어요')+'</span><button class="btn" data-act="topt" style="margin-left:auto" aria-expanded="'+S.topOpen+'">'+(S.topOpen?'접기 ▲':'펼치기 ▼')+'</button></div>';
+ if(S.topOpen){h+='<div class="ttabs" role="group" aria-label="종류">';
+  TOPT.forEach(t=>{h+='<button class="cf" data-act="toptab" data-k="'+t[0]+'" aria-pressed="'+(S.topTab===t[0])+'">'+t[1]+' '+TOPD[t[0]].length+'</button>'});
+  h+='</div><div class="tscroll">';
+  TOPD[S.topTab].slice().sort((a,b)=>b[2]-a[2]).forEach(x=>{h+='<div class="tpc"><b>'+esc(x[0])+'</b><span class="rt">★ '+x[1].toFixed(1)+'</span> · 리뷰 '+x[2].toLocaleString()+'건<small>'+esc(x[3])+'</small><a href="https://www.google.com/maps/search/'+encodeURIComponent(x[0]+' Phu Quoc')+'" target="_blank" rel="noopener">구글맵에서 열기 ↗</a></div>'});
+  h+='</div><p class="hint" style="margin:2px 4px 0">출처: Wanderlog(구글 평점 반영) 2026-11-01 확인. 구글 수치는 계속 바뀌니 가기 전 구글맵에서 다시 확인하세요. 쇼핑은 조건에 맞는 곳이 적어요.</p>'}
+ w.innerHTML=h+'</div>'}
+function placeTray(){const mc=$('#mapcol'),g=$('#grid'),t=$('#trayWrap'),u=$('#topWrap');if(!mc||!g||!t||!u)return;
+ if(innerWidth>=900&&!g.classList.contains('one')){const c=$('#pcard');if(t.parentNode!==mc){mc.appendChild(t);mc.appendChild(u)}}
+ else if(t.parentNode!==g){g.insertBefore(u,mc);g.insertBefore(t,u)}}
+addEventListener('resize',placeTray);
 /* drag & drop (pointer events: mouse + touch) */
 let drag=null,noClick=false;
 const listEls=()=>Array.from(document.querySelectorAll('#plist .it'));
@@ -765,9 +786,9 @@ function candBlock(k,x,pl){const cat=oCat(x),tc=cat==='cloth'?'shop':cat;
  if(!TRAY.some(t=>t[0]===tc))return '<p class="hint" style="margin:6px 0">이 종류는 후보 목록이 없어요. 위에서 종류를 바꾸면 그 종류의 후보가 나와요.</p>';
  const base=pl||lodgeP(),L=Object.values(P).filter(q=>tc==='shop'?(q.cat==='shop'||q.cat==='cloth'):q.cat===tc).filter(q=>q.id!==x.id).map(q=>({q,d:km(base,q)})).sort((a,b)=>a.d-b.d).slice(0,12);
  return '<div class="cand"><b class="lb">'+CAT[tc][0]+' 후보 · 누르면 바로 교체 (가까운 순)</b><div class="tscroll">'+L.map(z=>'<button class="cc" data-act="candswap" data-k="'+k+'" data-id="'+z.q.id+'" style="--c:'+colOf(z.q)+'">'+thumb(z.q,'sm')+'<span><b>'+esc(z.q.name.replace(/\s*\(.*\)/,''))+'</b><small>'+z.d.toFixed(1)+'km</small></span></button>').join('')+'</div></div>'}
-function render(){renderTabs();renderDays();renderHero();renderTray();const mapOn=S.view==='plan'||S.view==='spots';
+function render(){renderTabs();renderDays();renderHero();renderTray();renderTop();const mapOn=S.view==='plan'||S.view==='spots';
  if(S.view==='spots'){S.scope='all'}
- $('#mapcol').hidden=!mapOn;$('#grid').className='grid'+(mapOn?'':' one');
+ $('#mapcol').hidden=!mapOn;$('#grid').className='grid'+(mapOn?'':' one');placeTray();
  $('#side').innerHTML=({plan:sPlan,spots:sSpots,talk:sTalk,info:sInfo}[S.view]||sPlan)();
  $('#extra').hidden=S.view!=='plan';$('#extra').innerHTML=S.view==='plan'?sPlanExtra():'';
  $('#mdays').innerHTML=S.view==='plan'?DAYS.map((d,i)=>'<button class="dm2" data-act="day" data-i="'+i+'" aria-pressed="'+(i===S.day)+'">'+d.d.replace('/','.')+' <small>'+d.w+'</small></button>').join(''):'';
@@ -814,6 +835,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='delphoto'){const q=P[b.dataset.id];if(q)setPhoto(q,null)}
  else if(a==='tpick'){if(noClick)return;const q=P[b.dataset.id];if(!q)return;S.pick=q.id;if(S.scope==='route'&&!routePts().some(z=>z.pl.id===q.id))S.scope='all';renderCard();drawMap(false);flyTo(q,15);let oo=false;try{oo=!!map&&!S.autoZoom&&!map.getBounds().contains([q.lat,q.lng])}catch(e){}const nm0=q.name.replace(/\s*\(.*\)/,'');toast(oo?nm0+' · 지금 지도 화면 밖이에요. 지도를 직접 움직여 보세요':'지도에 표시했어요: '+nm0)}
  else if(a==='ttab'){S.tray=k;renderTray()}
+ else if(a==='toptab'){S.topTab=k;renderTop()}
+ else if(a==='topt'){S.topOpen=!S.topOpen;store.set('topopen',S.topOpen);renderTop()}
  else if(a==='trayt'){S.trayOpen=!S.trayOpen;store.set('trayopen',S.trayOpen);renderTray()}
  else if(a==='pick'){if(!map){toast('지도를 불러오지 못해 직접 좌표를 입력해 주세요');return}S.picking=k;$('#map').style.cursor='crosshair';toast('지도에서 위치를 눌러 주세요');if(innerWidth<900)$('#mapcol').scrollIntoView({behavior:'smooth',block:'start'})}
  else if(a==='addc'){const nm=($('#ntitle').value||'').trim(),cc=parseCoord($('#ncoord').value);if(!nm){toast('장소 이름을 입력해 주세요');return}if(!cc){toast('좌표를 "10.2172, 103.9572" 형식으로 입력하거나 지도에서 찍어 주세요');return}
