@@ -234,6 +234,9 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
 .tpc .nopin{color:#b45309;font-size:10.5px;margin-top:4px}
 #mhint{display:none}.pc p{-webkit-line-clamp:1}#seg{margin-top:6px}
 .rdel{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--ln);background:#fff;color:#b42318;font-size:13px;font-weight:800;display:grid;place-items:center}.rdel:hover{background:#fee4e2}
+.tag.s{background:#fde8e8;color:#b42318}
+.spcat{margin-top:8px;display:grid;gap:5px}.spc{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;font-size:12px}.spc i,.spn i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.spb{height:8px;background:#eef2f4;border-radius:6px;overflow:hidden}.spb u{display:block;height:100%;border-radius:6px}
+.spday{margin-top:10px}.sprows{margin-top:6px}.spr{display:grid;grid-template-columns:44px 1fr 120px;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--ln);font-size:13px}.spr.ex{grid-template-columns:44px 1fr auto 28px}.spt{color:var(--amb);font-weight:700;font-size:12px}.spn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.spr input{width:100%;padding:5px 8px;font-size:13px}.spv{font-size:12.5px}
 </style></head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -266,7 +269,7 @@ a.sm{font-size:11.5px;font-weight:700;color:var(--acd);text-decoration:none;bord
     <section id="extra" hidden></section>
   </div>
 </main>
-<footer>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
+<footer><span style="display:block;font-size:10.5px;color:#94a3b8">버전 2026-11-01-r10</span>지도 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자 · 사진은 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>의 자유 이용 사진이며, 음식 사진은 같은 종류 요리의 예시입니다. 시간·거리·일부 위치는 추정값이에요.</footer>
 </div>
 <button class="fab" id="fab" data-act="fab" hidden>🗺 지도 보기</button><div id="tip" hidden></div><div id="big" hidden></div><div id="toast" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -547,7 +550,7 @@ function renderCard(){const el=$('#pcard');if(!el)return;const isPlan=S.view==='
  el.innerHTML=h}
 function highlightRow(){document.querySelectorAll('.row').forEach(r=>r.style.background=(S.pick&&r.dataset.id===S.pick)?'var(--acs)':'')}
 /* ---------- views ---------- */
-const VIEWS=[['plan','일정'],['spots','후보'],['talk','번역'],['info','체크']];
+const VIEWS=[['plan','일정'],['spend','지출'],['talk','번역'],['info','체크']];
 const CHEV='<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
 const BED='<svg viewBox="0 0 24 24"><path d="M3 18v-8M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/></svg>';
 function renderTabs(){$('#tabs').innerHTML=VIEWS.map(v=>'<button role="tab" data-act="view" data-k="'+v[0]+'" aria-selected="'+(S.view===v[0])+'">'+v[1]+'</button>').join('')}
@@ -571,10 +574,11 @@ function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
  (lf?[]:D.items).forEach((it,i)=>{const k=S.day+'_'+i,x=it.o[0],z=ch.out[i],pl=z.pl,c=CAT[oCat(x)][1],on=!!S.open[k];
   const alt=it.o.length-1;
   h+='<div class="it'+(on?' on':'')+'" data-i="'+i+'"><div class="ihw">'+(S.edit?'<span class="gr" data-i="'+i+'" role="button" aria-label="끌어서 순서 바꾸기" title="끌어서 이동">'+GRIP+'</span>':'')+'<button class="ih" data-act="open" data-k="'+k+'" aria-expanded="'+on+'">'+(pl?thumb(pl,'',z.num):ntb(oCat(x)))+
-   '<span class="ix"><span class="tm">'+esc(it.tm)+' <span class="pill sm" style="--c:'+CAT[oCat(x)][1]+'">'+CAT[oCat(x)][0]+'</span></span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(itCost(it)>0?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button><button class="rdel" data-act="del" data-k="'+k+'" aria-label="이 일정 삭제" title="삭제">✕</button></div>';
+   '<span class="ix"><span class="tm">'+esc(it.tm)+' <span class="pill sm" style="--c:'+CAT[oCat(x)][1]+'">'+CAT[oCat(x)][0]+'</span></span><b>'+esc(oTitle(x))+(alt?'<span class="tag">예비 '+alt+'개</span>':'')+(z.leg!=null?'<span class="tag b">이전 '+z.leg.toFixed(1)+'km</span>':'')+(it.spent>0?'<span class="tag s">사용 '+shortV(it.spent)+'</span>':'')+(itCost(it)>0&&!(it.spent>0)?'<span class="tag c">'+(it.cost!=null?'':'≈')+shortV(itCost(it))+'</span>':'')+'</b><p>'+esc(x.why||(pl?pl.desc:''))+'</p></span>'+CHEV+'</button><button class="rdel" data-act="del" data-k="'+k+'" aria-label="이 일정 삭제" title="삭제">✕</button></div>';
   if(on){h+='<div class="body">';
    if(S.edit)h+='<div class="ied"><div class="edbar"><input type="text" class="wide" data-act="etitle" data-k="'+k+'" value="'+esc(oTitle(x))+'" placeholder="일정 이름" aria-label="일정 이름"></div>'+
-    '<div class="edbar"><select data-act="ecat" data-k="'+k+'" aria-label="일정 종류" style="width:auto">'+Object.keys(CAT).map(ck=>'<option value="'+ck+'"'+(ck===oCat(x)?' selected':'')+'>'+CAT[ck][0]+'</option>').join('')+'</select><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" aria-label="시간" style="width:auto"><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="비용(동) '+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" aria-label="예상 비용(동)" style="width:150px"></div>'+
+    '<div class="edbar"><select data-act="ecat" data-k="'+k+'" aria-label="일정 종류" style="width:auto">'+Object.keys(CAT).map(ck=>'<option value="'+ck+'"'+(ck===oCat(x)?' selected':'')+'>'+CAT[ck][0]+'</option>').join('')+'</select><input type="time" id="tm'+k+'" value="'+esc(it.tm)+'" data-act="tm" data-k="'+k+'" aria-label="시간" style="width:auto"><input type="number" id="cs'+k+'" min="0" step="10000" value="'+(it.cost!=null?it.cost:'')+'" placeholder="예상 비용(동) '+defCost(it.o[0])+'" data-act="cost" data-k="'+k+'" aria-label="예상 비용(동)" style="width:150px"></div>'+
+    '<div class="edbar"><span class="ds">💸 실제 사용</span><input type="number" min="0" step="1000" value="'+(it.spent!=null?it.spent:'')+'" placeholder="실제 쓴 금액(동)" data-act="spent" data-k="'+k+'" aria-label="실제 사용 금액(동)" style="width:170px">'+(it.spent>0?'<span class="mut">≈ '+fmtW(it.spent/rate())+'</span>':'<span class="mut">쓴 뒤에 적어두면 지출 탭에 모여요</span>')+'</div>'+
     '<div class="edbar"><input type="text" class="wide" data-act="ewhy" data-k="'+k+'" value="'+esc(x.why||'')+'" placeholder="메모·설명" aria-label="메모"></div>'+
     '<div class="edbar"><button class="btn" data-act="mv" data-k="'+k+'" data-dir="-1"'+(i===0?' disabled':'')+'>▲ 위로</button><button class="btn" data-act="mv" data-k="'+k+'" data-dir="1"'+(i===D.items.length-1?' disabled':'')+'>▼ 아래로</button><button class="btn d" data-act="del" data-k="'+k+'">삭제</button><span class="mut">비용을 비우면 추정값</span></div></div>';
    if(S.edit)h+=candBlock(k,x,pl);
@@ -583,12 +587,11 @@ function sPlan(){const D=DAYS[S.day],ch=chain(S.day),E=EXTRA[S.day];
     if(S.prev[k]!=null){const a=it.o[S.prev[k]],ap=oPlace(a);h+='<div class="body">'+(ap?det(ap,true):'<div class="dh"><b>'+esc(oTitle(a))+'</b></div>')+(a.why?'<p>'+esc(a.why)+'</p>':'')+'<div class="lk"><button class="btn p" data-act="swap" data-k="'+k+'" data-i="'+S.prev[k]+'">이 일정으로 교체</button><button class="btn" data-act="prev" data-k="'+k+'" data-i="'+S.prev[k]+'">닫기</button></div></div>'}}
    h+='</div>'}
   h+='</div>'});
- h+=(lf?'':'</div>')+'<div class="lkrow"><button class="btn" data-act="resetday">'+(S.zd?'한 번 더 누르면 이 날 리셋':'↺ 이 날 리셋')+'</button><button class="btn" data-act="resetall">'+(S.zero?'한 번 더 누르면 전체 리셋':'↺ 전체 리셋')+'</button><button class="btn" data-act="share">🔗 공유 링크 복사</button></div><p class="hint" style="margin:6px 2px 0"><b>리셋</b>은 직접 고친 내용을 지우고 처음 제안한 일정으로 되돌려요. 고친 내용은 바로 자동 저장돼요. 다른 기기로 옮기거나 백업하려면 공유 링크를 쓰세요.</p>';
+ h+=(lf?'':'</div>')+'<div class="lkrow"><button class="btn p" data-act="saverp">📍 지금 상태를 리셋 지점으로 저장</button><button class="btn" data-act="resetday">'+(S.zd?'한 번 더 누르면 이 날 리셋':'↺ 이 날 리셋')+'</button><button class="btn" data-act="resetall">'+(S.zero?'한 번 더 누르면 전체 리셋':'↺ 전체 리셋')+'</button><button class="btn" data-act="share">🔗 공유 링크 복사</button>'+(RP?'<button class="btn" data-act="clearrp">리셋 지점 해제(처음 기본값으로)</button>':'')+'</div><p class="hint" style="margin:6px 2px 0"><b>리셋</b>은 직접 고친 내용을 지우고 '+(RP?'내가 저장한 리셋 지점':'처음 제안한 일정')+'으로 되돌려요(사용 금액도 함께 지워져요). 일정을 완성했다면 📍로 리셋 지점을 저장해 두세요. 고친 내용은 바로 자동 저장돼요. 다른 기기로 옮기거나 백업하려면 공유 링크를 쓰세요.</p>';
  return h}
 function sPlanExtra(){let h='';const tf=S.fold.todo===true,mf=S.fold.memo===true;
  h+='<div class="two"><div class="card"><div class="fhead" style="margin:0"><h4 style="margin:0">오늘 챙길 것</h4>'+foldBtn('todo')+'</div>'+(tf?'':todosOf(S.day).map((t,i)=>'<div class="chk td"><input type="checkbox" data-act="ck" data-k="'+S.day+'_'+i+'"'+(S.ck[S.day+'_'+i]?' checked':'')+' aria-label="완료"><input type="text" class="tdi" data-act="tdt" data-k="'+S.day+'_'+i+'" value="'+esc(t)+'" aria-label="챙길 것"><button class="x" data-act="tdd" data-k="'+S.day+'_'+i+'" aria-label="삭제">×</button></div>').join('')+'<div class="edbar"><input type="text" id="tdnew" placeholder="챙길 것 추가" style="flex:1 1 120px"><button class="btn p" data-act="tda">추가</button></div>')+'</div>'+
   '<div class="card"><div class="fhead" style="margin:0"><h4 style="margin:0">함께 보는 메모</h4>'+foldBtn('memo')+'</div>'+(mf?'':'<textarea id="memo" placeholder="여기에 적어두세요 :)" aria-label="메모" style="margin-top:6px">'+esc(store.get('memo','')||'')+'</textarea><p class="hint" style="margin:6px 0 0">이 기기에만 저장돼요.</p>')+'</div></div>';
- h+=budPanel();
  return h+'<p class="hint" style="margin:10px 2px 0">시간과 거리는 추정치예요. 일정을 바꾸면 이동거리를 다시 계산해요.</p>'}
 const SPOTCATS=['all'].concat(FILT.filter(k=>k!=='stay'));
 function sSpots(){const ord={'북부':0,'중부':1,'남부':2};const base=Object.values(P).filter(q=>q.cat!=='move'&&q.cat!=='stay');
@@ -613,8 +616,25 @@ function sInfo(){let h='<div class="sh"><h3>응급·준비 정보</h3></div>';
  const ap=Object.values(P).filter(q=>q.ap&&q.cat!=='move').map(q=>q.name.replace(/\s*\(.*\)/,''));
  h+='<h4 class="g">위치 정확도</h4><div class="card"><p style="margin:0 0 6px">식당·카페는 지도 파일의 좌표라 정확합니다. 아래 장소는 위치가 대략이니 현장에서 구글 지도 검색으로 한 번 더 확인하세요.</p><p class="hint" style="margin:0">'+ap.map(esc).join(' · ')+'</p></div>';
  return h+'<p class="hint" style="margin:10px 2px">뎅기열은 국내 허가 백신이 없어 모기 예방이 핵심이에요. 병원 정보는 출발 전에 다시 확인하세요.</p>'}
+
+/* ---------- 지출 정리 탭 ---------- */
+function saveExp(){store.set('exp1',EXP)}
+function sSpend(){const ts=totSpent();let h='<div class="sh"><h3>지출 정리</h3><span class="ds">날짜별 · 장소별 · 종류별</span></div>'+budPanel();
+ h+='<div class="card" style="margin-top:0"><b>총 사용 '+(ts>0?fmtV(ts)+' (약 '+fmtW(ts/rate())+')':'아직 없음')+'</b>';
+ const by={};DAYS.forEach((d,i)=>{d.items.forEach(it=>{if(it.spent>0){const c=oCat(it.o[0]);by[c]=(by[c]||0)+it.spent}});});EXP.forEach(x=>{by[x.c]=(by[x.c]||0)+x.v});
+ const ks=Object.keys(by).sort((a,b)=>by[b]-by[a]);
+ if(ks.length){h+='<div class="spcat">'+ks.map(c=>'<div class="spc"><span><i style="background:'+CAT[c][1]+'"></i>'+CAT[c][0]+'</span><div class="spb"><u style="width:'+Math.max(4,Math.round(by[c]/by[ks[0]]*100))+'%;background:'+CAT[c][1]+'"></u></div><b>'+fmtV(by[c])+'</b></div>').join('')+'</div>'}
+ h+='</div>';
+ DAYS.forEach((d,di)=>{const sp=daySpent(di);h+='<div class="card spday"><div class="fhead" style="margin:0"><h4 style="margin:0">DAY '+(di+1)+' · '+d.d+' ('+d.w+') <small class="mut">'+esc(d.name)+'</small></h4><span class="ds"><b>'+(sp>0?fmtV(sp)+' · 약 '+fmtW(sp/rate()):'-')+'</b></span></div><div class="sprows">';
+  d.items.forEach((it,i)=>{const x=it.o[0],k=di+'_'+i;h+='<div class="spr"><span class="spt">'+esc(it.tm)+'</span><span class="spn"><i style="background:'+CAT[oCat(x)][1]+'"></i>'+esc(oTitle(x))+'</span><input type="number" min="0" step="1000" value="'+(it.spent!=null?it.spent:'')+'" placeholder="₫ 사용액" data-act="exps" data-k="'+k+'" aria-label="'+esc(oTitle(x))+' 사용 금액(동)"></div>'});
+  EXP.forEach((x,xi)=>{if(x.d!==di)return;h+='<div class="spr ex"><span class="spt">추가</span><span class="spn"><i style="background:'+CAT[x.c][1]+'"></i>'+esc(x.n)+'</span><b class="spv">'+fmtV(x.v)+'</b><button class="rdel" data-act="expdel" data-k="'+xi+'" aria-label="삭제">✕</button></div>'});
+  h+='</div><details class="addp"><summary>＋ 일정에 없는 지출 추가</summary><div class="edb"><div class="edbar"><input type="text" id="exn'+di+'" placeholder="어디서 · 무엇 (예: 편의점 간식)" style="flex:1 1 160px"><select id="exc'+di+'" style="width:auto">'+['food','cafe','shop','spa','move','sight','stay'].filter(c=>CAT[c]).map(c=>'<option value="'+c+'">'+CAT[c][0]+'</option>').join('')+'</select></div><div class="edbar"><input type="number" id="exv'+di+'" min="0" step="1000" placeholder="금액(동)" style="width:150px"><button class="btn p" data-act="expadd" data-k="'+di+'">추가</button></div></div></details></div>'});
+ return h+'<p class="hint" style="margin:10px 2px">금액은 베트남 동(₫) 기준이에요. 일정 목록의 칸에 적으면 오늘의 일정 상세에도 같이 반영돼요. 이 기기에만 저장되니 바꾸기 전엔 공유 링크로 백업하세요.</p>'}
 /* ---------- plan editing (tray, drag & drop, share) ---------- */
 const DEF=JSON.stringify(DAYS.map(d=>d.items));
+let RP=null;{const r=store.get('rp1',null);RP=r?cleanPlanSafe(r):null}
+function cleanPlanSafe(r){try{return cleanPlan(r)}catch(e){return null}}
+const baseJson=()=>RP?JSON.stringify(RP):DEF;
 const PKEY='plan3';
 function cleanItems(arr,ext){if(!Array.isArray(arr))return null;const out=[];
  for(const it of arr){if(!it||typeof it.tm!=='string'||!Array.isArray(it.o))return null;const o2=[];
@@ -622,7 +642,7 @@ function cleanItems(arr,ext){if(!Array.isArray(arr))return null;const out=[];
    if(x.id){if(!P[x.id]&&!(ext&&ext.has(x.id)))return null;const y={id:String(x.id)};if(x.t)y.t=String(x.t).slice(0,80);if(CAT[x.c])y.c=x.c;if(x.why)y.why=String(x.why).slice(0,200);o2.push(y)}
    else if(typeof x.t==='string'){o2.push({t:x.t.slice(0,80),c:CAT[x.c]?x.c:'move',why:String(x.why||'').slice(0,200)})}
    else return null}
-  if(!o2.length)return null;const ni={tm:it.tm.slice(0,5),o:o2},cs=numIn(it.cost,0,1e9);if(cs!=null)ni.cost=cs;out.push(ni)}
+  if(!o2.length)return null;const ni={tm:it.tm.slice(0,5),o:o2},cs=numIn(it.cost,0,1e9),sp=numIn(it.spent,0,1e10);if(cs!=null)ni.cost=cs;if(sp!=null)ni.spent=sp;out.push(ni)}
  return out}
 function cleanPlan(data,ext){if(!Array.isArray(data)||data.length!==DAYS.length)return null;const out=[];for(const d of data){const c=cleanItems(d,ext);if(!c)return null;out.push(c)}return out}
 function applyPlan(pl){pl.forEach((a,i)=>{DAYS[i].items=a})}
@@ -667,7 +687,7 @@ function readHero(file){const fr=new FileReader();fr.onload=()=>{const im=new Im
 {const raw=store.get(PKEY,null);let sv0=cleanPlan(raw);
  if(!sv0&&Array.isArray(raw)){/* 새 버전에서 일부 장소가 사라져도 나머지 수정 내용은 살린다 */
   sv0=DAYS.map((d,i)=>{const day=Array.isArray(raw[i])?raw[i]:null;if(!day)return d.items;const keep=[];for(const it of day){if(!it||typeof it.tm!=='string'||!Array.isArray(it.o))continue;const one=cleanItems([it]);if(one&&one.length){keep.push(one[0]);continue}
-    const os=it.o.map(x=>cleanItems([{tm:it.tm,o:[x]}])).filter(Boolean).map(r=>r[0].o[0]);if(os.length){const ni={tm:it.tm.slice(0,5),o:os};if(it.cost!=null&&isFinite(+it.cost))ni.cost=+it.cost;keep.push(ni)}}
+    const os=it.o.map(x=>cleanItems([{tm:it.tm,o:[x]}])).filter(Boolean).map(r=>r[0].o[0]);if(os.length){const ni={tm:it.tm.slice(0,5),o:os};if(it.cost!=null&&isFinite(+it.cost))ni.cost=+it.cost;if(it.spent!=null&&isFinite(+it.spent))ni.spent=+it.spent;keep.push(ni)}}
     return keep});}
  if(sv0)applyPlan(sv0)}
 const toMin=t=>{const m=/^(\d{1,2}):(\d{2})$/.exec(t||'');return m?(+m[1])*60+(+m[2]):null};
@@ -766,6 +786,7 @@ function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){retu
 const fmtV=n=>'₫'+Math.round(n).toLocaleString('ko-KR');
 const fmtW=n=>Math.round(n).toLocaleString('ko-KR')+'원';
 const shortV=n=>n>=1e6?'₫'+(n/1e6).toFixed(1)+'M':'₫'+Math.round(n/1000)+'k';
+let EXP=(store.get('exp1',[])||[]).filter(x=>x&&Number.isInteger(x.d)&&x.d>=0&&x.d<5&&x.n&&x.v>=0).map(x=>({d:x.d,n:String(x.n).slice(0,40),v:+x.v,c:CAT[x.c]?x.c:'food'}));
 let FX=store.get('fx1',{})||{};if(typeof FX!=='object')FX={};
 const rate=()=>(FX.manual>0?FX.manual:(FX.auto>0?FX.auto:18));
 const defCost=x=>({food:400000,cafe:120000,spa:700000})[oCat(x)]||0;
@@ -775,12 +796,14 @@ const totCost=()=>DAYS.reduce((a,d,i)=>a+dayCost(i),0);
 function loadFx(){fetch('https://open.er-api.com/v6/latest/KRW').then(r=>r.json()).then(j=>{const v=j&&j.rates&&j.rates.VND;if(!(v>0))throw 0;FX.auto=v;FX.at=Date.now();store.set('fx1',FX);updBud()}).catch(()=>{})}
 function updBud(){const o=$('#budout');if(o)o.innerHTML=budOut();const c=$('.costline');if(c)c.outerHTML=costLine();const r=$('#fxrate');if(r&&document.activeElement!==r)r.value=(+rate().toFixed(2));const n=$('#fxnote');if(n)n.textContent=fxNote()}
 const fxNote=()=>FX.manual>0?'직접 입력한 환율':(FX.auto>0?'자동 환율 '+(FX.at?new Date(FX.at).toLocaleDateString('ko-KR'):'')+' 기준':'예시값(인터넷 연결 시 자동 갱신) · 직접 입력 가능');
-function costLine(){const d=dayCost(S.day),t=totCost();return '<div class="costline">💰 오늘 예상 비용 <b>'+fmtV(d)+'</b> (약 '+fmtW(d/rate())+') · 5일 합계 '+fmtW(t/rate())+' <span class="mut">일정을 눌러 비용을 고칠 수 있어요 · 추정값이 기본이에요</span></div>'}
-function budOut(){const rows=DAYS.map((d,i)=>'<tr><td>DAY '+(i+1)+' · '+d.d+'</td><td>'+fmtV(dayCost(i))+'</td><td>'+fmtW(dayCost(i)/rate())+'</td></tr>').join('');const t=totCost(),tk=t/rate(),bg=parseFloat(FX.budget);
- let h='<table class="bt"><tr><th>날짜</th><th>예상 비용(동)</th><th>원화 환산</th></tr>'+rows+'<tr><td><b>합계</b></td><td><b>'+fmtV(t)+'</b></td><td><b>'+fmtW(tk)+'</b></td></tr></table>';
- if(bg>0)h+='<p class="bmsg">예산 '+fmtW(bg)+' 중 '+fmtW(tk)+' 사용 예정 → '+(bg-tk>=0?'<b class="ok">'+fmtW(bg-tk)+' 남아요</b>':'<b class="bad">'+fmtW(tk-bg)+' 초과예요</b>')+'</p>';
- return h+'<p class="hint" style="margin:4px 0 0">식비·카페·마사지는 임의 추정값(2명 기준)이에요. 입장권·교통비는 0으로 두었으니 일정에서 직접 입력하세요. 숙소·항공은 포함하지 않았어요.</p>'}
-function budPanel(){return '<details class="edp" id="bud" style="margin:14px 0 0"'+(S.budOpen?' open':'')+'><summary>💱 환율·예산 계산기</summary><div class="edb">'+
+const daySpent=di=>DAYS[di].items.reduce((a,it)=>a+(it.spent||0),0)+EXP.filter(x=>x.d===di).reduce((a,x)=>a+x.v,0);
+const totSpent=()=>DAYS.reduce((a,d,i)=>a+daySpent(i),0);
+function costLine(){const d=dayCost(S.day),t=totCost(),sp=daySpent(S.day);return '<div class="costline">💰 오늘 예상 <b>'+fmtV(d)+'</b> (약 '+fmtW(d/rate())+') · 실제 사용 <b>'+(sp>0?fmtV(sp)+' (약 '+fmtW(sp/rate())+')':'아직 없음')+'</b> <a href="#" data-act="view" data-k="spend" style="font-weight:800;color:var(--acd);text-decoration:none">지출 정리 →</a></div>'}
+function budOut(){const rows=DAYS.map((d,i)=>'<tr><td>DAY '+(i+1)+' · '+d.d+'</td><td>'+fmtV(dayCost(i))+'</td><td>'+(daySpent(i)>0?fmtV(daySpent(i)):'-')+'</td><td>'+(daySpent(i)>0?fmtW(daySpent(i)/rate()):'-')+'</td></tr>').join('');const t=totCost(),ts=totSpent(),bg=parseFloat(FX.budget),use=ts>0?ts/rate():t/rate();
+ let h='<table class="bt"><tr><th>날짜</th><th>예상(동)</th><th>실제(동)</th><th>실제 원화</th></tr>'+rows+'<tr><td><b>합계</b></td><td><b>'+fmtV(t)+'</b></td><td><b>'+(ts>0?fmtV(ts):'-')+'</b></td><td><b>'+(ts>0?fmtW(ts/rate()):'-')+'</b></td></tr></table>';
+ if(bg>0)h+='<p class="bmsg">예산 '+fmtW(bg)+' 중 '+fmtW(use)+(ts>0?' 사용':' 사용 예정')+' → '+(bg-use>=0?'<b class="ok">'+fmtW(bg-use)+' 남아요</b>':'<b class="bad">'+fmtW(use-bg)+' 초과예요</b>')+'</p>';
+ return h+'<p class="hint" style="margin:4px 0 0">예상은 식비·카페·마사지만 임의 추정(2명 기준)이에요. 숙소·항공은 포함하지 않았어요. 실제 금액은 일정 상세나 지출 탭에서 적어요.</p>'}
+function budPanel(){return '<details class="edp" id="bud" style="margin:0 0 12px" open><summary>💱 환율·예산 계산기 (예상 + 실제 사용 합산)</summary><div class="edb">'+
  '<div class="edbar"><span class="ds">1원 =</span><input type="number" id="fxrate" step="0.1" min="0" value="'+(+rate().toFixed(2))+'" style="width:96px"><span class="ds">동</span><button class="btn" data-act="fxauto">자동 환율로</button></div><p class="hint" id="fxnote" style="margin:0 0 6px">'+fxNote()+'</p>'+
  '<div class="edbar"><input type="number" id="bkrw" placeholder="원" style="width:120px"><span>원 ⇄</span><input type="number" id="bvnd" placeholder="동" style="width:140px"><span>동</span></div>'+
  '<div class="edbar"><span class="ds">전체 예산</span><input type="number" id="budget" placeholder="원" value="'+(FX.budget||'')+'" style="width:140px"><span class="ds">원</span></div>'+
@@ -818,7 +841,7 @@ function candBlock(k,x,pl){const cat=oCat(x),tc=cat==='cloth'?'shop':cat;
 function render(){renderTabs();renderDays();renderHero();renderTray();renderTop();const mapOn=S.view==='plan'||S.view==='spots';
  if(S.view==='spots'){S.scope='all'}
  $('#mapcol').hidden=!mapOn;$('#grid').className='grid'+(mapOn?'':' one');placeTray();
- $('#side').innerHTML=({plan:sPlan,spots:sSpots,talk:sTalk,info:sInfo}[S.view]||sPlan)();
+ $('#side').innerHTML=({plan:sPlan,spend:sSpend,talk:sTalk,info:sInfo}[S.view]||sPlan)();
  $('#extra').hidden=S.view!=='plan';$('#extra').innerHTML=S.view==='plan'?sPlanExtra():'';
  $('#mdays').innerHTML=S.view==='plan'?DAYS.map((d,i)=>'<button class="dm2" data-act="day" data-i="'+i+'" aria-pressed="'+(i===S.day)+'">'+d.d.replace('/','.')+' <small>'+d.w+'</small></button>').join(''):'';
  {const mf=S.fold.map===true;$('#mapcol').classList.toggle('folded',mf);$('#mfold').textContent=mf?'펼치기 ▼':'접기 ▲'}
@@ -890,8 +913,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='addp'){e.stopPropagation();const q=P[b.dataset.id];if(!q)return;insertItem(S.day,q.id,DAYS[S.day].items.length);savePlan();S.open={};render();toast('맨 아래에 추가했어요 · ⠿ 손잡이로 위치를 옮기세요')}
  else if(a==='mv'){const ds=k.split('_'),di=+ds[0],ix=+ds[1],dir=+b.dataset.dir;if(moveItem(di,ix,dir<0?ix-1:ix+2)){savePlan();S.open={};S.open[di+'_'+(ix+dir)]=true;render()}}
  else if(a==='del'){const ds=k.split('_');DAYS[+ds[0]].items.splice(+ds[1],1);savePlan();S.open={};render();toast('삭제했어요 · 아래 "이 날 기본 일정으로"로 되돌릴 수 있어요')}
- else if(a==='resetday'){if(!S.zd){S.zd=1;render();setTimeout(()=>{S.zd=0},4000);return}S.zd=0;const def=JSON.parse(DEF);DAYS[S.day].items=def[S.day];savePlan();S.open={};render();toast('이 날 일정을 기본으로 되돌렸어요')}
- else if(a==='resetall'){if(!S.zero){S.zero=1;render();setTimeout(()=>{S.zero=0},4000);return}S.zero=0;applyPlan(JSON.parse(DEF));savePlan();S.open={};render();toast('전체 일정을 기본으로 되돌렸어요')}
+ else if(a==='saverp'){const snap=DAYS.map(d=>d.items.map(it=>{const c=JSON.parse(JSON.stringify(it));delete c.spent;return c}));RP=cleanPlan(snap);if(!RP){toast('저장하지 못했어요');return}store.set('rp1',RP);render();toast('📍 지금 일정을 리셋 지점으로 저장했어요')}
+ else if(a==='clearrp'){RP=null;try{localStorage.removeItem('pq_rp1')}catch(e){}render();toast('리셋 지점을 해제했어요. 이제 처음 기본값으로 리셋돼요')}
+ else if(a==='resetday'){if(!S.zd){S.zd=1;render();setTimeout(()=>{S.zd=0},4000);return}S.zd=0;const def=JSON.parse(baseJson());DAYS[S.day].items=def[S.day];savePlan();S.open={};render();toast(RP?'이 날 일정을 내 리셋 지점으로 되돌렸어요':'이 날 일정을 기본으로 되돌렸어요')}
+ else if(a==='resetall'){if(!S.zero){S.zero=1;render();setTimeout(()=>{S.zero=0},4000);return}S.zero=0;applyPlan(JSON.parse(baseJson()));savePlan();S.open={};render();toast(RP?'전체 일정을 내 리셋 지점으로 되돌렸어요':'전체 일정을 기본으로 되돌렸어요')}
  else if(a==='share'){const u=location.origin+location.pathname+'#p='+encodePlan();copyText(u).then(ok=>{if(ok)toast('공유 링크를 복사했어요. 메신저에 붙여넣으세요');else{window.prompt('아래 링크를 복사하세요',u)}})}
  else if(a==='applyshare'){if(pendingShare){const ps=pendingShare;CUST.forEach(c=>{delete P[c.id]});CUST=ps.cust;CUST.forEach(c=>{P[c.id]=c});store.set('cust1',CUST);Object.values(P).forEach(restoreP);OVR=ps.ovr;Object.keys(OVR).forEach(applyOvr);store.set('ovr1',OVR);TODO=ps.todo;store.set('todo2',TODO);HERO=ps.hero;store.set('hero1',HERO);applyPlan(ps.plan);savePlan();pendingShare=null}$('#shareBan').hidden=true;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}S.open={};render();toast('공유받은 일정을 적용했어요')}
  else if(a==='closeshare'){pendingShare=null;$('#shareBan').hidden=true;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
@@ -902,6 +927,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
  else if(a==='show'){const q=P[b.dataset.id];if(!q)return;S.pick=q.id;if(S.view==='plan'&&S.scope==='route'&&!routePts().some(z=>z.pl.id===q.id))S.scope='all';renderCard();drawMap(false);flyTo(q,16);highlightRow();if(innerWidth<900)$('#mapcol').scrollIntoView({behavior:'smooth',block:'start'})}
  else if(a==='sp'){const q=P[b.dataset.id];S.pick=q.id;renderCard();drawMap(false);flyTo(q,15);highlightRow();if(innerWidth<900)$('#mapcol').scrollIntoView({behavior:'smooth',block:'start'})}
  else if(a==='spot'){S.spot=(k==='all')?'':k;S.cats=new Set(k==='all'?FILT:[k]);S.pick=null;render()}
+ else if(a==='expadd'){const di=+k,n=($('#exn'+di).value||'').trim(),v=numIn($('#exv'+di).value,0,1e10);if(!n||v==null){toast('내용과 금액을 입력해 주세요');return}EXP.push({d:di,n:n.slice(0,40),v,c:$('#exc'+di).value});saveExp();render();toast('추가했어요')}
+ else if(a==='expdel'){EXP.splice(+k,1);saveExp();render()}
  else if(a==='mic')mic();else if(a==='find')findPh();else if(a==='online')online();
  else if(a==='slot'){const s=SL[i],j=+$('#sl'+i).value,it=s[3][j],vi=s[1]+it[1]+s[2]+s[4];$('#slres').innerHTML=phraseRow([it[0]+' '+s[0],vi.replace(/\s+\./,'.').replace(/\s+\?/,'?')])}
  else if(a==='say')speak(b.dataset.t);else if(a==='big')big(b.dataset.k,b.dataset.t)});
@@ -909,7 +936,7 @@ document.addEventListener('change',e=>{const d=e.target.dataset;if(!d)return;if(
   if(d.act==='etitle'){if(v)x.t=v.slice(0,80);else if(x.id)delete x.t}
   else if(d.act==='ecat'){if(CAT[e.target.value]){x.c=e.target.value;const tcx=x.c==='cloth'?'shop':x.c;if(TRAY.some(t=>t[0]===tcx))S.tray=tcx}}
   else{if(v)x.why=v.slice(0,200);else delete x.why}
-  savePlan();render()}}else if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
+  savePlan();render()}}else if(d.act==='spent'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e10);if(it){if(v==null||e.target.value==='')delete it.spent;else it.spent=v;savePlan();render()}}else if(d.act==='exps'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e10);if(it){if(v==null||e.target.value==='')delete it.spent;else it.spent=v;savePlan();render()}}else if(d.act==='cost'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]],v=numIn(e.target.value,0,1e9);if(it){if(v==null||e.target.value==='')delete it.cost;else it.cost=v;savePlan();render()}}else if(e.target.id==='pfile'){const f=e.target.files&&e.target.files[0],q=cardPick();if(f&&q)readPhoto(f,q)}else if(d.act==='tdt'){const ds=d.k.split('_'),arr=todosOf(+ds[0]).slice();arr[+ds[1]]=e.target.value.slice(0,60);saveTodo(+ds[0],arr.filter(x=>x.trim()));render()}else if(e.target.id==='ncat'){const cc=$('#ncolor');if(cc)cc.value=CAT[e.target.value][1]}else if(e.target.id==='hfile'){const f=e.target.files&&e.target.files[0];if(f)readHero(f)}else if(d.act==='tm'){const ds=d.k.split('_'),it=DAYS[+ds[0]].items[+ds[1]];if(it&&toMin(e.target.value)!=null){it.tm=e.target.value;sortByTime(+ds[0]);savePlan();S.open={};render();toast('시간을 바꾸고 순서를 시간순으로 정리했어요')}}else if(d.act==='chk'){S.chk[d.i]=e.target.checked;store.set('chk2',S.chk)}else if(d.act==='ck'){S.ck[d.k]=e.target.checked;store.set('ck3',S.ck)}});
 document.addEventListener('input',e=>{const id=e.target.id,v=parseFloat(e.target.value);if(id==='memo')store.set('memo',e.target.value);
  else if(id==='fxrate'){FX.manual=v>0?v:undefined;store.set('fx1',FX);updBud()}
  else if(id==='bkrw'){$('#bvnd').value=v>0?Math.round(v*rate()):''}
